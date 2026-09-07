@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatCoins } from '../domain/catalog';
@@ -19,11 +18,11 @@ export function AppHeader({ balance }: AppHeaderProps) {
       </View>
       <View style={styles.actions}>
         <Pressable accessibilityRole="button" accessibilityLabel={`${formatCoins(balance)} Gemma coins`} style={styles.balance}>
-          <Ionicons name="diamond" color={colors.violet} size={14} />
+          <Text style={styles.coinGlyph}>◆</Text>
           <Text style={styles.balanceText}>{formatCoins(balance)}</Text>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Profile" style={styles.iconButton}>
-          <Ionicons name="person-outline" color={colors.text} size={20} />
+          <Text style={styles.profileGlyph}>●</Text>
         </Pressable>
       </View>
     </View>
@@ -39,5 +38,7 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   balance: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: spacing.md, backgroundColor: colors.surfaceRaised, borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border },
   balanceText: { color: colors.text, fontWeight: '700' },
+  coinGlyph: { color: colors.violet, fontSize: 14 },
+  profileGlyph: { color: colors.text, fontSize: 16 },
   iconButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceRaised, borderRadius: radii.pill, borderWidth: 1, borderColor: colors.border },
 });
