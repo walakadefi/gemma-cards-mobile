@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '../../components/AppScreen';
@@ -12,10 +13,21 @@ interface ProfileScreenProps {
   packs: DemoPack[];
   cards: DemoCard[];
   onClose: () => void;
+  onReset: () => void;
 }
 
-export function ProfileScreen({ balance, packs, cards, onClose }: ProfileScreenProps) {
+export function ProfileScreen({ balance, packs, cards, onClose, onReset }: ProfileScreenProps) {
   const summary = createProfileSummary(packs, cards, balance);
+  const [confirmingReset, setConfirmingReset] = useState(false);
+
+  const handleReset = () => {
+    if (!confirmingReset) {
+      setConfirmingReset(true);
+      return;
+    }
+    onReset();
+    setConfirmingReset(false);
+  };
 
   return (
     <AppScreen scroll>
@@ -67,6 +79,21 @@ export function ProfileScreen({ balance, packs, cards, onClose }: ProfileScreenP
           <Text style={styles.noticeTitle}>Local prototype data</Text>
           <Text style={styles.noticeBody}>Your packs and cards are stored locally on this device. No personal details, payments, or account credentials are collected.</Text>
         </View>
+
+        <View style={styles.resetCard}>
+          <Text style={styles.resetTitle}>Replay the demo</Text>
+          <Text style={styles.resetBody}>Clear every locally saved pack and card to start the prototype again.</Text>
+          {confirmingReset ? <Text accessibilityRole="alert" style={styles.resetWarning}>This cannot be undone. Tap confirm to remove the collection.</Text> : null}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={confirmingReset ? 'Confirm reset demo collection' : 'Reset demo collection'}
+            onPress={handleReset}
+            style={[styles.resetButton, confirmingReset && styles.resetButtonConfirm]}
+          >
+            <Ionicons name={confirmingReset ? 'trash' : 'refresh'} color={confirmingReset ? colors.text : colors.danger} size={18} />
+            <Text style={[styles.resetButtonText, confirmingReset && styles.resetButtonTextConfirm]}>{confirmingReset ? 'Confirm reset' : 'Reset demo collection'}</Text>
+          </Pressable>
+        </View>
       </View>
     </AppScreen>
   );
@@ -110,4 +137,12 @@ const styles = StyleSheet.create({
   notice: { marginTop: spacing.sm, padding: spacing.md, borderRadius: radii.md, backgroundColor: '#10231D', borderWidth: 1, borderColor: '#1C5B46' },
   noticeTitle: { color: colors.emerald, fontWeight: '900' },
   noticeBody: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption, lineHeight: 18 },
+  resetCard: { marginTop: spacing.sm, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  resetTitle: { color: colors.text, fontWeight: '900' },
+  resetBody: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption, lineHeight: 18 },
+  resetWarning: { marginTop: spacing.sm, color: colors.danger, fontSize: fontSizes.caption, fontWeight: '800' },
+  resetButton: { minHeight: 48, marginTop: spacing.md, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, borderRadius: radii.md, borderWidth: 1, borderColor: colors.danger },
+  resetButtonConfirm: { backgroundColor: colors.danger },
+  resetButtonText: { color: colors.danger, fontWeight: '900' },
+  resetButtonTextConfirm: { color: colors.text },
 });

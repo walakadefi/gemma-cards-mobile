@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { createDemoPack, DemoCard, DemoPack, openDemoPack } from '../domain/demoCollection';
 import { CollectionStorage, loadDemoCollection, saveDemoCollection } from './collectionStorage';
@@ -8,6 +8,7 @@ interface DemoCollectionValue {
   cards: DemoCard[];
   addPack: (expansionId: string) => string;
   openPack: (packId: string) => void;
+  resetCollection: () => void;
 }
 
 const DemoCollectionContext = createContext<DemoCollectionValue | null>(null);
@@ -20,12 +21,13 @@ function mergePacks(current: DemoPack[], stored: DemoPack[]): DemoPack[] {
 export function DemoCollectionProvider({ children, storage }: { children: ReactNode; storage?: CollectionStorage }) {
   const [packs, setPacks] = useState<DemoPack[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const resetDuringHydration = useRef(false);
 
   useEffect(() => {
     let active = true;
     loadDemoCollection(storage).then((storedPacks) => {
       if (!active) return;
-      setPacks((current) => mergePacks(current, storedPacks));
+      setPacks((current) => resetDuringHydration.current ? current : mergePacks(current, storedPacks));
       setHydrated(true);
     });
     return () => { active = false; };
@@ -46,6 +48,10 @@ export function DemoCollectionProvider({ children, storage }: { children: ReactN
     },
     openPack: (packId) => {
       setPacks((current) => current.map((pack) => pack.id === packId ? openDemoPack(pack) : pack));
+    },
+    resetCollection: () => {
+      resetDuringHydration.current = true;
+      setPacks([]);
     },
   }), [packs]);
 

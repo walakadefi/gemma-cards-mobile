@@ -5,11 +5,12 @@ import { createDemoPack } from '../domain/demoCollection';
 import { DemoCollectionProvider, useDemoCollection } from './DemoCollectionContext';
 
 function CollectionHarness() {
-  const { packs, addPack } = useDemoCollection();
+  const { packs, addPack, resetCollection } = useDemoCollection();
   return (
     <>
       <Text>{packs.length} packs</Text>
       <Pressable accessibilityRole="button" accessibilityLabel="Add pack" onPress={() => addPack('pitch-black')} />
+      <Pressable accessibilityRole="button" accessibilityLabel="Reset collection" onPress={resetCollection} />
     </>
   );
 }
@@ -47,5 +48,30 @@ describe('DemoCollectionProvider persistence', () => {
       'demo-pitch-black',
       'demo-ascended-heroes',
     ]);
+  });
+
+  it('keeps a reset empty when hydration finishes with older stored packs', async () => {
+    let resolveStored!: (value: string | null) => void;
+    const stored = new Promise<string | null>((resolve) => { resolveStored = resolve; });
+    const storage = {
+      getItem: jest.fn(() => stored),
+      setItem: jest.fn(async (_key: string, _value: string) => undefined),
+    };
+
+    render(
+      <DemoCollectionProvider storage={storage}>
+        <CollectionHarness />
+      </DemoCollectionProvider>,
+    );
+
+    fireEvent.press(screen.getByRole('button', { name: 'Reset collection' }));
+    await act(async () => {
+      resolveStored(JSON.stringify({ version: 1, packs: [createDemoPack('ascended-heroes')] }));
+      await stored;
+    });
+
+    await waitFor(() => expect(storage.setItem).toHaveBeenCalledTimes(1));
+    expect(screen.getByText('0 packs')).toBeTruthy();
+    expect(JSON.parse(storage.setItem.mock.calls[0][1]).packs).toEqual([]);
   });
 });

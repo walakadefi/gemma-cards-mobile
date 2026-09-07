@@ -5,7 +5,7 @@ import { useDemoCollection } from '../src/state/DemoCollectionContext';
 
 export default function ProfileRoute() {
   const router = useRouter();
-  const { packs, cards } = useDemoCollection();
+  const { packs, cards, resetCollection } = useDemoCollection();
 
-  return <ProfileScreen balance={1000} packs={packs} cards={cards} onClose={() => router.back()} />;
+  return <ProfileScreen balance={1000} packs={packs} cards={cards} onClose={() => router.back()} onReset={resetCollection} />;
 }
