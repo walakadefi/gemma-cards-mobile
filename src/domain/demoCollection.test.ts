@@ -1,4 +1,5 @@
 import { createDemoPack, openDemoPack } from './demoCollection';
+import { expansions } from '../fixtures/catalog';
 
 describe('demo collection', () => {
   it('creates a sealed pack without exposing reveal data', () => {
@@ -31,16 +32,14 @@ describe('demo collection', () => {
     expect(() => openDemoPack(createDemoPack('unknown'))).toThrow('No demo outcome exists for this expansion.');
   });
 
-  it.each([
-    'pitch-black',
-    'time-of-battle',
-    'chaos-rising',
-    'kamis-island',
-    'perfect-order',
-    'one-piece-heroines',
-    'ascended-heroes',
-    'azure-seas-seven',
-  ])('builds ten cards for latest shelf expansion %s', (expansionId) => {
-    expect(openDemoPack(createDemoPack(expansionId)).revealedCards).toHaveLength(10);
+  it('builds a deterministic ten-card reveal for every catalog expansion', () => {
+    expect(expansions).toHaveLength(40);
+    expansions.forEach(({ id, topCardValueCents }) => {
+      const first = openDemoPack(createDemoPack(id));
+      const second = openDemoPack(createDemoPack(id));
+      expect(first).toEqual(second);
+      expect(first.revealedCards).toHaveLength(10);
+      expect(first.revealedCards?.[9].marketValueCents).toBe(topCardValueCents);
+    });
   });
 });
