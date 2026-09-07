@@ -1,4 +1,4 @@
-import { AccessibilityInfo, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 
 import { Expansion, formatCoins, formatEuro } from '../domain/catalog';
@@ -27,11 +27,7 @@ export function PackCard({ expansion, onPress }: PackCardProps) {
       style={({ pressed }) => [styles.card, pressed && !reduceMotion && styles.pressed]}
     >
       <View style={[styles.pack, { borderColor: expansion.accent }]}>
-        <View style={[styles.glow, { backgroundColor: expansion.accent }]} />
-        <Text style={styles.packCode}>{expansion.code}</Text>
-        <Text style={styles.packBrand}>GEMMA</Text>
-        <View style={[styles.packRule, { backgroundColor: expansion.accent }]} />
-        <Text style={styles.packLabel}>DIGITAL RIP</Text>
+        <Image accessibilityLabel={`${expansion.name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={styles.packImage} />
       </View>
       <Text style={styles.game}>{expansion.game === 'pokemon' ? 'POKÉMON' : 'ONE PIECE'}</Text>
       <Text numberOfLines={2} style={styles.name}>{expansion.name}</Text>
@@ -56,11 +52,7 @@ const styles = StyleSheet.create({
   card: { minWidth: 160, flex: 1, padding: spacing.md, backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border },
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.88 },
   pack: { height: 154, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, borderWidth: 1, backgroundColor: colors.surfaceRaised, marginBottom: spacing.md },
-  glow: { position: 'absolute', width: 120, height: 120, borderRadius: 60, opacity: 0.22, transform: [{ scaleX: 1.5 }] },
-  packCode: { position: 'absolute', top: spacing.sm, right: spacing.sm, color: colors.textMuted, fontSize: 10, fontWeight: '800' },
-  packBrand: { color: colors.text, fontSize: 25, fontWeight: '900', letterSpacing: 1.5 },
-  packRule: { width: 52, height: 3, marginVertical: spacing.sm, borderRadius: radii.pill },
-  packLabel: { color: colors.textMuted, fontSize: 10, fontWeight: '800', letterSpacing: 1.4 },
+  packImage: { width: '100%', height: '100%' },
   game: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
   name: { minHeight: 44, marginTop: 4, color: colors.text, fontSize: fontSizes.label, lineHeight: 21, fontWeight: '800' },
   metaRow: { marginTop: spacing.sm, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },

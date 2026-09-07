@@ -17,6 +17,7 @@ export interface Expansion {
   volatility: 1 | 2 | 3 | 4 | 5;
   accent: string;
   description: string;
+  imageUri: string;
   odds: OddsTier[];
 }
 

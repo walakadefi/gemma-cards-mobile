@@ -11,4 +11,8 @@ describe('catalog helpers', () => {
     expect(formatCoins(1000)).toBe('1,000');
     expect(formatEuro(144200)).toBe('€1,442');
   });
+
+  it('uses canonical Gemma pack artwork for every expansion', () => {
+    expect(expansions.every((item) => item.imageUri === `https://www.gemma.cards/cards/packs/${item.code.toLowerCase()}.webp`)).toBe(true);
+  });
 });

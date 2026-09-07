@@ -11,6 +11,7 @@ export const expansions: Expansion[] = [
     volatility: 3,
     accent: '#8B5CF6',
     description: 'A dark, high-contrast set with elusive Pokémon chase cards.',
+    imageUri: 'https://www.gemma.cards/cards/packs/pbl.webp',
     odds: [
       { label: 'Base', chancePercent: 60, minimumValueCents: 0 },
       { label: 'Rare', chancePercent: 30, minimumValueCents: 500 },
@@ -27,6 +28,7 @@ export const expansions: Expansion[] = [
     volatility: 4,
     accent: '#00B67A',
     description: 'Heroic artwork and a dramatic top end for ambitious collectors.',
+    imageUri: 'https://www.gemma.cards/cards/packs/asc.webp',
     odds: [
       { label: 'Base', chancePercent: 50, minimumValueCents: 0 },
       { label: 'Rare', chancePercent: 35, minimumValueCents: 500 },
@@ -43,6 +45,7 @@ export const expansions: Expansion[] = [
     volatility: 4,
     accent: '#FF6B4A',
     description: 'Spectral fire types anchor a vivid set with real swings.',
+    imageUri: 'https://www.gemma.cards/cards/packs/pfl.webp',
     odds: [
       { label: 'Base', chancePercent: 58, minimumValueCents: 0 },
       { label: 'Rare', chancePercent: 30, minimumValueCents: 500 },
@@ -59,6 +62,7 @@ export const expansions: Expansion[] = [
     volatility: 5,
     accent: '#F5C451',
     description: 'A volatile One Piece release built around decisive confrontations.',
+    imageUri: 'https://www.gemma.cards/cards/packs/op16.webp',
     odds: [
       { label: 'Base', chancePercent: 40, minimumValueCents: 0 },
       { label: 'Rare', chancePercent: 40, minimumValueCents: 500 },
@@ -75,6 +79,7 @@ export const expansions: Expansion[] = [
     volatility: 4,
     accent: '#43B8FF',
     description: 'An adventurous island set filled with bold crews and rare leaders.',
+    imageUri: 'https://www.gemma.cards/cards/packs/op15.webp',
     odds: [
       { label: 'Base', chancePercent: 55, minimumValueCents: 0 },
       { label: 'Rare', chancePercent: 30, minimumValueCents: 500 },
@@ -91,6 +96,7 @@ export const expansions: Expansion[] = [
     volatility: 5,
     accent: '#E63B82',
     description: 'Legacy characters and a spectacular chase card define this set.',
+    imageUri: 'https://www.gemma.cards/cards/packs/op13.webp',
     odds: [
       { label: 'Base', chancePercent: 66, minimumValueCents: 0 },
       { label: 'Rare', chancePercent: 29, minimumValueCents: 500 },

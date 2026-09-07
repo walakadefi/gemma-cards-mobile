@@ -1,4 +1,4 @@
-import { createDemoPack, revealDemoPack } from './demoCollection';
+import { createDemoPack, openDemoPack } from './demoCollection';
 
 describe('demo collection', () => {
   it('creates a sealed pack without exposing reveal data', () => {
@@ -7,26 +7,31 @@ describe('demo collection', () => {
     expect(pack.id).toBe('demo-pitch-black');
     expect(pack.status).toBe('sealed');
     expect(pack.commitment).toMatch(/^[a-f0-9]{64}$/);
-    expect(pack.revealedCard).toBeUndefined();
+    expect(pack.revealedCards).toBeUndefined();
     expect(pack.verification).toBeUndefined();
   });
 
-  it('reveals a deterministic fixture for the chosen slot', () => {
+  it('opens a deterministic ten-card fixture with the hit last', () => {
     const sealed = createDemoPack('pitch-black');
-    const first = revealDemoPack(sealed, 1);
-    const second = revealDemoPack(createDemoPack('pitch-black'), 1);
+    const first = openDemoPack(sealed);
+    const second = openDemoPack(createDemoPack('pitch-black'));
 
     expect(first).toEqual(second);
     expect(first.status).toBe('revealed');
-    expect(first.revealedCard?.name).toBe('Umbreon ex');
+    expect(first.revealedCards).toHaveLength(10);
+    expect(first.revealedCards?.[9].name).toBe('Mega Darkrai ex');
     expect(first.verification).toMatchObject({
       commitment: sealed.commitment,
-      selectedIndex: 1,
-      algorithmVersion: 'demo-fixture-v1',
+      cardCount: 10,
+      algorithmVersion: 'demo-pack-v2',
     });
   });
 
-  it('rejects a slot outside the three demo positions', () => {
-    expect(() => revealDemoPack(createDemoPack('pitch-black'), 3)).toThrow('Pack position must be 0, 1, or 2.');
+  it('rejects a pack without fixture outcomes', () => {
+    expect(() => openDemoPack(createDemoPack('unknown'))).toThrow('No demo outcome exists for this expansion.');
+  });
+
+  it.each(['pitch-black', 'ascended-heroes', 'phantasmal-flames', 'time-of-battle', 'kamis-island', 'carrying-on-his-will'])('builds ten cards for %s', (expansionId) => {
+    expect(openDemoPack(createDemoPack(expansionId)).revealedCards).toHaveLength(10);
   });
 });

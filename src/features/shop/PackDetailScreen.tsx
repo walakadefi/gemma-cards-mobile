@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '../../components/AppScreen';
 import { EmptyState } from '../../components/EmptyState';
@@ -38,9 +38,7 @@ export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDe
         <Text style={styles.description}>{expansion.description}</Text>
 
         <View style={[styles.packVisual, { borderColor: expansion.accent }]}>
-          <View style={[styles.glow, { backgroundColor: expansion.accent }]} />
-          <Text style={styles.packBrand}>GEMMA</Text>
-          <Text style={styles.packType}>SEALED DEMO PACK</Text>
+          <Image accessibilityLabel={`${expansion.name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={styles.packImage} />
         </View>
 
         <View style={styles.summary}>
@@ -94,9 +92,7 @@ const styles = StyleSheet.create({
   title: { marginTop: spacing.sm, color: colors.text, fontSize: fontSizes.hero, lineHeight: 39, fontWeight: '900', letterSpacing: -1 },
   description: { marginTop: spacing.sm, color: colors.textMuted, fontSize: fontSizes.body, lineHeight: 22 },
   packVisual: { height: 240, marginVertical: spacing.lg, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderRadius: 24, borderWidth: 1, backgroundColor: colors.surface },
-  glow: { position: 'absolute', width: 220, height: 220, borderRadius: 110, opacity: 0.22, transform: [{ scaleX: 1.4 }] },
-  packBrand: { color: colors.text, fontSize: 38, fontWeight: '900', letterSpacing: 2 },
-  packType: { marginTop: spacing.sm, color: colors.textMuted, fontSize: 10, fontWeight: '900', letterSpacing: 1.8 },
+  packImage: { width: '100%', height: '100%' },
   summary: { flexDirection: 'row', justifyContent: 'space-between', padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surfaceRaised, borderWidth: 1, borderColor: colors.border },
   metricRight: { alignItems: 'flex-end' },
   metricLabel: { color: colors.textMuted, fontSize: 10, fontWeight: '900', letterSpacing: 1 },

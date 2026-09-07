@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 
-import { createDemoPack, DemoCard, DemoPack, revealDemoPack } from '../domain/demoCollection';
+import { createDemoPack, DemoCard, DemoPack, openDemoPack } from '../domain/demoCollection';
 
 interface DemoCollectionValue {
   packs: DemoPack[];
   cards: DemoCard[];
   addPack: (expansionId: string) => string;
-  revealPack: (packId: string, selectedIndex: number) => void;
+  openPack: (packId: string) => void;
 }
 
 const DemoCollectionContext = createContext<DemoCollectionValue | null>(null);
@@ -16,14 +16,14 @@ export function DemoCollectionProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<DemoCollectionValue>(() => ({
     packs,
-    cards: packs.flatMap((pack) => pack.revealedCard ? [pack.revealedCard] : []),
+    cards: packs.flatMap((pack) => pack.revealedCards ?? []),
     addPack: (expansionId) => {
       const pack = createDemoPack(expansionId);
       setPacks((current) => current.some((item) => item.id === pack.id) ? current : [...current, pack]);
       return pack.id;
     },
-    revealPack: (packId, selectedIndex) => {
-      setPacks((current) => current.map((pack) => pack.id === packId ? revealDemoPack(pack, selectedIndex) : pack));
+    openPack: (packId) => {
+      setPacks((current) => current.map((pack) => pack.id === packId ? openDemoPack(pack) : pack));
     },
   }), [packs]);
 
