@@ -10,9 +10,10 @@ import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 interface PackDetailScreenProps {
   expansionId: string;
   onClose?: () => void;
+  onAddDemoPack?: (expansionId: string) => void;
 }
 
-export function PackDetailScreen({ expansionId, onClose }: PackDetailScreenProps) {
+export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDetailScreenProps) {
   const [prepared, setPrepared] = useState(false);
   const expansion = expansions.find((item) => item.id === expansionId);
 
@@ -74,7 +75,7 @@ export function PackDetailScreen({ expansionId, onClose }: PackDetailScreenProps
           <Text style={styles.fairnessBody}>For a real purchase, Gemma shows the outcome commitment before payment and discloses the seed after the reveal so the result can be verified.</Text>
         </View>
 
-        <Pressable accessibilityRole="button" accessibilityLabel="Add demo pack" accessibilityHint="Prepares a local demonstration and charges no coins" onPress={() => setPrepared(true)} style={styles.action}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Add demo pack" accessibilityHint="Prepares a local demonstration and charges no coins" onPress={() => { setPrepared(true); onAddDemoPack?.(expansion.id); }} style={styles.action}>
           <Text style={styles.actionText}>Add demo pack</Text>
           <Text style={styles.actionMeta}>No charge · prototype only</Text>
         </Pressable>

@@ -1,7 +1,7 @@
-import { AppHeader } from '../../src/components/AppHeader';
-import { AppScreen } from '../../src/components/AppScreen';
-import { EmptyState } from '../../src/components/EmptyState';
+import { BinderScreen as BinderCollectionScreen } from '../../src/features/binder/BinderScreen';
+import { useDemoCollection } from '../../src/state/DemoCollectionContext';
 
 export default function BinderScreen() {
-  return <AppScreen><AppHeader balance={1000} /><EmptyState eyebrow="BINDER" title="Your pulls will live here" body="Prototype view — no real cards or market values are loaded." /></AppScreen>;
+  const { cards } = useDemoCollection();
+  return <BinderCollectionScreen cards={cards} />;
 }
