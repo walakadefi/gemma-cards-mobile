@@ -19,4 +19,13 @@ describe('PackDetailScreen', () => {
 
     expect(screen.getByText(/Demo pack prepared/i)).toBeTruthy();
   });
+
+  it('provides a visible way to close the modal', () => {
+    const onClose = jest.fn();
+    render(<PackDetailScreen expansionId="pitch-black" onClose={onClose} />);
+
+    fireEvent.press(screen.getByRole('button', { name: 'Close pack details' }));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

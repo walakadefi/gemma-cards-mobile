@@ -9,9 +9,10 @@ import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 
 interface PackDetailScreenProps {
   expansionId: string;
+  onClose?: () => void;
 }
 
-export function PackDetailScreen({ expansionId }: PackDetailScreenProps) {
+export function PackDetailScreen({ expansionId, onClose }: PackDetailScreenProps) {
   const [prepared, setPrepared] = useState(false);
   const expansion = expansions.find((item) => item.id === expansionId);
 
@@ -26,6 +27,11 @@ export function PackDetailScreen({ expansionId }: PackDetailScreenProps) {
   return (
     <AppScreen scroll>
       <View style={styles.content}>
+        {onClose ? (
+          <Pressable accessibilityRole="button" accessibilityLabel="Close pack details" onPress={onClose} style={styles.closeButton}>
+            <Text style={styles.closeText}>×</Text>
+          </Pressable>
+        ) : null}
         <Text style={styles.eyebrow}>{expansion.game === 'pokemon' ? 'POKÉMON' : 'ONE PIECE'} · {expansion.code}</Text>
         <Text accessibilityRole="header" style={styles.title}>{expansion.name}</Text>
         <Text style={styles.description}>{expansion.description}</Text>
@@ -81,6 +87,8 @@ export function PackDetailScreen({ expansionId }: PackDetailScreenProps) {
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
+  closeButton: { width: 44, height: 44, alignSelf: 'flex-end', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm, borderRadius: radii.pill, backgroundColor: colors.surfaceRaised, borderWidth: 1, borderColor: colors.border },
+  closeText: { color: colors.text, fontSize: 28, lineHeight: 30, fontWeight: '500' },
   eyebrow: { color: colors.violet, fontSize: fontSizes.caption, fontWeight: '900', letterSpacing: 1.2 },
   title: { marginTop: spacing.sm, color: colors.text, fontSize: fontSizes.hero, lineHeight: 39, fontWeight: '900', letterSpacing: -1 },
   description: { marginTop: spacing.sm, color: colors.textMuted, fontSize: fontSizes.body, lineHeight: 22 },
