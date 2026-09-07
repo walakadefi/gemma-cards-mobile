@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '../../components/AppScreen';
@@ -24,7 +25,7 @@ export function ProfileScreen({ balance, packs, cards, onClose }: ProfileScreenP
           <Text accessibilityRole="header" style={styles.pageTitle}>Guest Collector</Text>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Close profile" onPress={onClose} style={styles.closeButton}>
-          <Text style={styles.closeGlyph}>×</Text>
+          <Ionicons testID="profile-close-icon" name="close" color={colors.text} size={25} />
         </Pressable>
       </View>
 
@@ -43,7 +44,7 @@ export function ProfileScreen({ balance, packs, cards, onClose }: ProfileScreenP
             <Text style={styles.cardLabel}>GEMMA COINS</Text>
             <Text style={styles.balance}>{formatCoins(summary.balance)}</Text>
           </View>
-          <Text style={styles.coin}>◆</Text>
+          <Ionicons name="diamond" color={colors.violet} size={28} />
         </View>
 
         <Text style={styles.sectionTitle}>Collection snapshot</Text>
@@ -84,7 +85,6 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
   pageTitle: { marginTop: 3, color: colors.text, fontSize: fontSizes.title, fontWeight: '900' },
   closeButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.surfaceRaised, borderWidth: 1, borderColor: colors.border },
-  closeGlyph: { color: colors.text, fontSize: 28, lineHeight: 30 },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl, gap: spacing.md },
   identityCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.surfaceRaised, borderWidth: 1, borderColor: '#3C2A68' },
   avatar: { width: 64, height: 64, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.violet },
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
   balanceCard: { minHeight: 112, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   cardLabel: { color: colors.textMuted, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
   balance: { marginTop: spacing.xs, color: colors.text, fontSize: 32, fontWeight: '900' },
-  coin: { color: colors.violet, fontSize: 28 },
   sectionTitle: { marginTop: spacing.md, color: colors.text, fontSize: fontSizes.label, fontWeight: '900' },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   stat: { width: '48%', minWidth: 130, flexGrow: 1, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },

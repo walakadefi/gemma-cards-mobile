@@ -24,6 +24,7 @@ describe('PackDetailScreen', () => {
     const onClose = jest.fn();
     render(<PackDetailScreen expansionId="pitch-black" onClose={onClose} />);
 
+    expect(screen.getByTestId('pack-details-close-icon').props.name).toBe('close');
     fireEvent.press(screen.getByRole('button', { name: 'Close pack details' }));
 
     expect(onClose).toHaveBeenCalledTimes(1);

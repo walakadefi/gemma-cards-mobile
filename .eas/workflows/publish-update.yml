@@ -1,0 +1,90 @@
+name: Publish Gemma update
+run_name: ${{ inputs.channel }} · ${{ inputs.platform }} · ${{ inputs.message }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        type: choice
+        description: Choose which installed app channel receives this update
+        options:
+          - preview
+          - production
+        required: true
+        default: preview
+      platform:
+        type: choice
+        description: Choose the phone platform to update
+        options:
+          - all
+          - android
+          - ios
+        required: true
+        default: all
+      message:
+        type: string
+        description: Describe what changed in this Gemma release
+        required: true
+      rollout_percentage:
+        type: choice
+        description: Percentage of eligible users who receive the update immediately
+        options:
+          - '10'
+          - '25'
+          - '50'
+          - '100'
+        required: true
+        default: '100'
+      upload_sentry_sourcemaps:
+        type: boolean
+        description: Upload Sentry source maps when Sentry is configured
+        required: true
+        default: false
+
+jobs:
+  publish_update_10:
+    name: Publish ${{ inputs.channel }} update to 10%
+    if: ${{ inputs.rollout_percentage == '10' }}
+    type: update
+    environment: ${{ inputs.channel }}
+    params:
+      channel: ${{ inputs.channel }}
+      platform: ${{ inputs.platform }}
+      message: ${{ inputs.message }}
+      rollout_percentage: 10
+      upload_sentry_sourcemaps: ${{ inputs.upload_sentry_sourcemaps }}
+
+  publish_update_25:
+    name: Publish ${{ inputs.channel }} update to 25%
+    if: ${{ inputs.rollout_percentage == '25' }}
+    type: update
+    environment: ${{ inputs.channel }}
+    params:
+      channel: ${{ inputs.channel }}
+      platform: ${{ inputs.platform }}
+      message: ${{ inputs.message }}
+      rollout_percentage: 25
+      upload_sentry_sourcemaps: ${{ inputs.upload_sentry_sourcemaps }}
+
+  publish_update_50:
+    name: Publish ${{ inputs.channel }} update to 50%
+    if: ${{ inputs.rollout_percentage == '50' }}
+    type: update
+    environment: ${{ inputs.channel }}
+    params:
+      channel: ${{ inputs.channel }}
+      platform: ${{ inputs.platform }}
+      message: ${{ inputs.message }}
+      rollout_percentage: 50
+      upload_sentry_sourcemaps: ${{ inputs.upload_sentry_sourcemaps }}
+
+  publish_update_100:
+    name: Publish ${{ inputs.channel }} update to everyone
+    if: ${{ inputs.rollout_percentage == '100' }}
+    type: update
+    environment: ${{ inputs.channel }}
+    params:
+      channel: ${{ inputs.channel }}
+      platform: ${{ inputs.platform }}
+      message: ${{ inputs.message }}
+      upload_sentry_sourcemaps: ${{ inputs.upload_sentry_sourcemaps }}

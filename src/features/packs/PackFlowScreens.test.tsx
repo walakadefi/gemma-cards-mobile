@@ -24,6 +24,7 @@ describe('demo pack flow screens', () => {
 
     expect(screen.getByText(/Commitment/)).toBeTruthy();
     expect(screen.getByLabelText('Pitch Black booster pack artwork')).toBeTruthy();
+    expect(screen.getByTestId('reveal-close-icon').props.name).toBe('close');
     fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
     expect(onRip).toHaveBeenCalledTimes(1);
   });

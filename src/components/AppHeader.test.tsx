@@ -7,6 +7,8 @@ describe('AppHeader', () => {
     const onProfilePress = jest.fn();
 
     render(<AppHeader balance={1000} onProfilePress={onProfilePress} />);
+    expect(screen.getByTestId('header-coin-icon').props.name).toBe('diamond');
+    expect(screen.getByTestId('header-profile-icon').props.name).toBe('person-outline');
     fireEvent.press(screen.getByRole('button', { name: 'Open profile' }));
 
     expect(onProfilePress).toHaveBeenCalledTimes(1);

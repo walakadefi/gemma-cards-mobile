@@ -3,6 +3,12 @@
     "name": "GemmaCards",
     "slug": "gemma-cards-mobile",
     "version": "0.1.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/bd9b5e9a-128b-4448-baf4-71974f85c529"
+    },
     "icon": "./assets/icon.png",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
@@ -28,7 +34,8 @@
       }
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-asset"
     ],
     "web": {
       "output": "static"

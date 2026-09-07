@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -30,7 +31,7 @@ export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDe
       <View style={styles.content}>
         {onClose ? (
           <Pressable accessibilityRole="button" accessibilityLabel="Close pack details" onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeText}>×</Text>
+            <Ionicons testID="pack-details-close-icon" name="close" color={colors.text} size={25} />
           </Pressable>
         ) : null}
         <Text style={styles.eyebrow}>{expansion.game === 'pokemon' ? 'POKÉMON' : 'ONE PIECE'} · {expansion.code}</Text>
@@ -87,7 +88,6 @@ export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDe
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
   closeButton: { width: 44, height: 44, alignSelf: 'flex-end', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm, borderRadius: radii.pill, backgroundColor: colors.surfaceRaised, borderWidth: 1, borderColor: colors.border },
-  closeText: { color: colors.text, fontSize: 28, lineHeight: 30, fontWeight: '500' },
   eyebrow: { color: colors.violet, fontSize: fontSizes.caption, fontWeight: '900', letterSpacing: 1.2 },
   title: { marginTop: spacing.sm, color: colors.text, fontSize: fontSizes.hero, lineHeight: 39, fontWeight: '900', letterSpacing: -1 },
   description: { marginTop: spacing.sm, color: colors.textMuted, fontSize: fontSizes.body, lineHeight: 22 },

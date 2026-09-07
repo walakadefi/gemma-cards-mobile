@@ -31,6 +31,7 @@ describe('ProfileScreen', () => {
     const onClose = jest.fn();
     render(<ProfileScreen balance={1000} packs={[]} cards={[]} onClose={onClose} />);
 
+    expect(screen.getByTestId('profile-close-icon').props.name).toBe('close');
     fireEvent.press(screen.getByRole('button', { name: 'Close profile' }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
