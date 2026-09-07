@@ -1,5 +1,5 @@
 import { expansions } from '../fixtures/catalog';
-import { filterExpansions, formatCoins, formatEuro } from './catalog';
+import { browseExpansions, filterExpansions, formatCoins, formatEuro } from './catalog';
 
 describe('catalog helpers', () => {
   it('matches all 40 Gemma packs in live catalog order with source-backed facts', () => {
@@ -55,6 +55,24 @@ describe('catalog helpers', () => {
   it('formats exact euro values from Gemma', () => {
     expect(formatCoins(1000)).toBe('1,000');
     expect(formatEuro(144246)).toBe('€1,442.46');
+  });
+
+  it('searches pack names and set codes without case or surrounding whitespace', () => {
+    expect(browseExpansions(expansions, { filter: 'all', query: '  op01 ', sort: 'newest' }).map((item) => item.name)).toEqual(['Romance Dawn']);
+    expect(browseExpansions(expansions, { filter: 'all', query: 'PrIsMaTiC', sort: 'newest' }).map((item) => item.code)).toEqual(['PRE']);
+  });
+
+  it('combines game filters with search', () => {
+    expect(browseExpansions(expansions, { filter: 'pokemon', query: 'royal', sort: 'newest' })).toEqual([]);
+    expect(browseExpansions(expansions, { filter: 'onepiece', query: 'royal', sort: 'newest' }).map((item) => item.code)).toEqual(['OP10']);
+  });
+
+  it('sorts by lowest price or highest top-card value while preserving source order for ties', () => {
+    const sample = [expansions[9], expansions[0], expansions[1]];
+
+    expect(browseExpansions(sample, { filter: 'all', query: '', sort: 'newest' }).map((item) => item.code)).toEqual(['BLK', 'PBL', 'ASC']);
+    expect(browseExpansions(sample, { filter: 'all', query: '', sort: 'price' }).map((item) => item.code)).toEqual(['PBL', 'ASC', 'BLK']);
+    expect(browseExpansions(sample, { filter: 'all', query: '', sort: 'top-value' }).map((item) => item.code)).toEqual(['ASC', 'BLK', 'PBL']);
   });
 
   it('uses canonical Gemma pack artwork for every expansion', () => {

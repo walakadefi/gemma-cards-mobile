@@ -1,5 +1,6 @@
 export type Game = 'pokemon' | 'onepiece';
 export type GameFilter = 'all' | Game;
+export type ExpansionSort = 'newest' | 'price' | 'top-value';
 
 export interface Expansion {
   id: string;
@@ -19,6 +20,31 @@ export const filterExpansions = (items: Expansion[], filter: GameFilter): Expans
   }
 
   return items.filter((item) => item.game === filter);
+};
+
+interface BrowseExpansionsOptions {
+  filter: GameFilter;
+  query: string;
+  sort: ExpansionSort;
+}
+
+export const browseExpansions = (items: Expansion[], options: BrowseExpansionsOptions): Expansion[] => {
+  const query = options.query.trim().toLocaleLowerCase();
+  const indexedItems = filterExpansions(items, options.filter)
+    .map((item) => ({ item, sourceIndex: items.indexOf(item) }))
+    .filter(({ item }) => !query || item.name.toLocaleLowerCase().includes(query) || item.code.toLocaleLowerCase().includes(query));
+
+  return indexedItems
+    .sort((left, right) => {
+      if (options.sort === 'price') {
+        return left.item.coinPrice - right.item.coinPrice || left.sourceIndex - right.sourceIndex;
+      }
+      if (options.sort === 'top-value') {
+        return right.item.topCardValueCents - left.item.topCardValueCents || left.sourceIndex - right.sourceIndex;
+      }
+      return left.sourceIndex - right.sourceIndex;
+    })
+    .map(({ item }) => item);
 };
 
 export const formatCoins = (coins: number): string =>
