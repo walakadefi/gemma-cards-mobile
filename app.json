@@ -27,9 +27,21 @@
         "backgroundColor": "#050506"
       }
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
+    "web": {
+      "output": "static"
+    },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "bd9b5e9a-128b-4448-baf4-71974f85c529"
+      }
+    },
+    "owner": "cool_boy_11"
   }
 }

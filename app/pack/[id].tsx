@@ -1,7 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { PackDetailScreen } from '../../src/features/shop/PackDetailScreen';
+import { expansions } from '../../src/fixtures/catalog';
 import { useDemoCollection } from '../../src/state/DemoCollectionContext';
+
+export function generateStaticParams() {
+  return expansions.map(({ id }) => ({ id }));
+}
 
 export default function PackDetailRoute() {
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();

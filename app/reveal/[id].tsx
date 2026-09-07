@@ -2,7 +2,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { EmptyState } from '../../src/components/EmptyState';
 import { AppScreen } from '../../src/components/AppScreen';
 import { RevealScreen } from '../../src/features/packs/RevealScreen';
+import { expansions } from '../../src/fixtures/catalog';
 import { useDemoCollection } from '../../src/state/DemoCollectionContext';
+
+export function generateStaticParams() {
+  return expansions.map(({ id }) => ({ id: `demo-${id}` }));
+}
 
 export default function RevealRoute() {
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();

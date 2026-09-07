@@ -18,4 +18,8 @@ describe('native app configuration', () => {
     expect(easConfig.build.preview.distribution).toBe('internal');
     expect(easConfig.build.production.autoIncrement).toBe(true);
   });
+
+  it('exports route HTML for worldwide web hosting', () => {
+    expect(appConfig.web).toMatchObject({ output: 'static' });
+  });
 });
