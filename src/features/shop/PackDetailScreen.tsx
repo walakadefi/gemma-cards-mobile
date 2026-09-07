@@ -52,20 +52,11 @@ export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDe
             <Text style={styles.positiveValue}>{formatEuro(expansion.topCardValueCents)}</Text>
           </View>
         </View>
-        <Text style={styles.volatility}>Volatility {expansion.volatility}/5 · {'⚡'.repeat(expansion.volatility)}</Text>
-
-        <Text accessibilityRole="header" style={styles.sectionTitle}>Odds and value ranges</Text>
-        <Text style={styles.sectionBody}>These deterministic demo tiers show how production odds will be explained before a decision.</Text>
-        <View style={styles.oddsCard}>
-          {expansion.odds.map((tier, index) => (
-            <View key={tier.label} style={[styles.oddsRow, index < expansion.odds.length - 1 && styles.oddsDivider]}>
-              <View>
-                <Text style={styles.oddsLabel}>{tier.label}</Text>
-                <Text style={styles.minimum}>From {formatEuro(tier.minimumValueCents)}</Text>
-              </View>
-              <Text style={styles.chance}>{tier.chancePercent}%</Text>
-            </View>
-          ))}
+        <Text accessibilityRole="header" style={styles.sectionTitle}>What this demo mirrors</Text>
+        <View style={styles.factsCard}>
+          <Text style={styles.fact}>10 cards revealed one at a time</Text>
+          <Text style={styles.fact}>Every pull lands in your Binder</Text>
+          <Text style={styles.fact}>The outcome is sealed before the reveal</Text>
         </View>
 
         <View style={styles.fairness}>
@@ -98,15 +89,9 @@ const styles = StyleSheet.create({
   metricLabel: { color: colors.textMuted, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   metricValue: { marginTop: 4, color: colors.text, fontSize: fontSizes.label, fontWeight: '900' },
   positiveValue: { marginTop: 4, color: colors.emerald, fontSize: fontSizes.label, fontWeight: '900' },
-  volatility: { marginTop: spacing.sm, color: '#F5C451', fontSize: fontSizes.caption, textAlign: 'right' },
   sectionTitle: { marginTop: spacing.xl, color: colors.text, fontSize: fontSizes.title, fontWeight: '900' },
-  sectionBody: { marginTop: spacing.sm, color: colors.textMuted, fontSize: fontSizes.body, lineHeight: 22 },
-  oddsCard: { marginTop: spacing.md, paddingHorizontal: spacing.md, backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border },
-  oddsRow: { minHeight: 68, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  oddsDivider: { borderBottomWidth: 1, borderBottomColor: colors.border },
-  oddsLabel: { color: colors.text, fontSize: fontSizes.body, fontWeight: '800' },
-  minimum: { marginTop: 3, color: colors.textMuted, fontSize: fontSizes.caption },
-  chance: { color: colors.violet, fontSize: fontSizes.label, fontWeight: '900' },
+  factsCard: { marginTop: spacing.md, gap: spacing.sm, padding: spacing.md, backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border },
+  fact: { color: colors.textMuted, fontSize: fontSizes.body, lineHeight: 22 },
   fairness: { marginTop: spacing.lg, padding: spacing.lg, backgroundColor: '#10221C', borderRadius: radii.lg, borderWidth: 1, borderColor: '#1E5A46' },
   fairnessEyebrow: { color: colors.emerald, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
   fairnessTitle: { marginTop: spacing.sm, color: colors.text, fontSize: fontSizes.label, fontWeight: '900' },

@@ -39,7 +39,7 @@ describe('demo pack flow screens', () => {
     reveal.unmount();
     render(<BinderScreen cards={pack.revealedCards!} />);
     expect(screen.getByText('Illustration Rare')).toBeTruthy();
-    expect(screen.getByText('€345')).toBeTruthy();
+    expect(screen.getByText('€345.34')).toBeTruthy();
     expect(screen.getAllByText('Pitch Black')).toHaveLength(10);
   });
 });

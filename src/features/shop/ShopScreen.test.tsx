@@ -8,6 +8,10 @@ describe('ShopScreen', () => {
 
     expect(screen.getByText('Pitch Black')).toBeTruthy();
     expect(screen.getByText('The Time of Battle')).toBeTruthy();
+    expect(screen.getByText('Chaos Rising')).toBeTruthy();
+    expect(screen.getByText('Perfect Order')).toBeTruthy();
+    expect(screen.getByText('One Piece Heroines')).toBeTruthy();
+    expect(screen.getByText("The Azure Sea's Seven")).toBeTruthy();
 
     fireEvent.press(screen.getByRole('button', { name: 'Show One Piece packs' }));
 

@@ -22,7 +22,7 @@ export function PackCard({ expansion, onPress }: PackCardProps) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`Open ${expansion.name} details`}
-      accessibilityHint={`${expansion.game === 'pokemon' ? 'Pokémon' : 'One Piece'} pack, volatility ${expansion.volatility} out of 5`}
+      accessibilityHint={`${expansion.game === 'pokemon' ? 'Pokémon' : 'One Piece'} pack, ${formatCoins(expansion.coinPrice)} coins`}
       onPress={onPress}
       style={({ pressed }) => [styles.card, pressed && !reduceMotion && styles.pressed]}
     >
@@ -41,9 +41,6 @@ export function PackCard({ expansion, onPress }: PackCardProps) {
           <Text style={styles.value}>{formatEuro(expansion.topCardValueCents)}</Text>
         </View>
       </View>
-      <Text accessibilityLabel={`Volatility ${expansion.volatility} out of 5`} style={styles.volatility}>
-        {'⚡'.repeat(expansion.volatility)}{'·'.repeat(5 - expansion.volatility)}
-      </Text>
     </Pressable>
   );
 }
@@ -60,5 +57,4 @@ const styles = StyleSheet.create({
   metaLabel: { color: colors.textMuted, fontSize: 9, fontWeight: '800', letterSpacing: 0.8 },
   coins: { color: colors.text, marginTop: 3, fontWeight: '800' },
   value: { color: colors.emerald, marginTop: 3, fontWeight: '800' },
-  volatility: { color: '#F5C451', marginTop: spacing.sm, fontSize: 12, letterSpacing: 1 },
 });

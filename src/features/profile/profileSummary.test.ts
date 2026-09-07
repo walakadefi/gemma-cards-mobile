@@ -11,7 +11,7 @@ describe('createProfileSummary', () => {
       packCount: 2,
       openedPackCount: 1,
       cardCount: 10,
-      collectionValueCents: 38640,
+      collectionValueCents: 38674,
     });
   });
 

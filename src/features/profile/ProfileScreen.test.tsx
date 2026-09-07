@@ -24,7 +24,7 @@ describe('ProfileScreen', () => {
     expect(screen.getByText('2 packs')).toBeTruthy();
     expect(screen.getByText('1 opened')).toBeTruthy();
     expect(screen.getByText('10 cards')).toBeTruthy();
-    expect(screen.getByText('€386')).toBeTruthy();
+    expect(screen.getByText('€386.74')).toBeTruthy();
     expect(screen.getByText(/stored locally on this device/i)).toBeTruthy();
   });
 
