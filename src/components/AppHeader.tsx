@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatCoins } from '../domain/catalog';
@@ -5,9 +6,10 @@ import { colors, fontSizes, radii, spacing } from '../theme/tokens';
 
 interface AppHeaderProps {
   balance: number;
+  onProfilePress?: () => void;
 }
 
-export function AppHeader({ balance }: AppHeaderProps) {
+export function AppHeader({ balance, onProfilePress = () => router.push('/profile') }: AppHeaderProps) {
   return (
     <View style={styles.header}>
       <View style={styles.brand} accessibilityLabel="GemmaCards">
@@ -21,7 +23,7 @@ export function AppHeader({ balance }: AppHeaderProps) {
           <Text style={styles.coinGlyph}>◆</Text>
           <Text style={styles.balanceText}>{formatCoins(balance)}</Text>
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Profile" style={styles.iconButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Open profile" onPress={onProfilePress} style={styles.iconButton}>
           <Text style={styles.profileGlyph}>●</Text>
         </Pressable>
       </View>
