@@ -1,6 +1,7 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 import { createDemoPack, DemoCard, DemoPack, openDemoPack } from '../domain/demoCollection';
+import { CollectionStorage, loadDemoCollection, saveDemoCollection } from './collectionStorage';
 
 interface DemoCollectionValue {
   packs: DemoPack[];
@@ -11,8 +12,29 @@ interface DemoCollectionValue {
 
 const DemoCollectionContext = createContext<DemoCollectionValue | null>(null);
 
-export function DemoCollectionProvider({ children }: { children: ReactNode }) {
+function mergePacks(current: DemoPack[], stored: DemoPack[]): DemoPack[] {
+  const currentIds = new Set(current.map((pack) => pack.id));
+  return [...current, ...stored.filter((pack) => !currentIds.has(pack.id))];
+}
+
+export function DemoCollectionProvider({ children, storage }: { children: ReactNode; storage?: CollectionStorage }) {
   const [packs, setPacks] = useState<DemoPack[]>([]);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    loadDemoCollection(storage).then((storedPacks) => {
+      if (!active) return;
+      setPacks((current) => mergePacks(current, storedPacks));
+      setHydrated(true);
+    });
+    return () => { active = false; };
+  }, [storage]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    void saveDemoCollection(storage, packs);
+  }, [hydrated, packs, storage]);
 
   const value = useMemo<DemoCollectionValue>(() => ({
     packs,

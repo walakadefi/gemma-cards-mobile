@@ -65,7 +65,7 @@ export function ProfileScreen({ balance, packs, cards, onClose }: ProfileScreenP
 
         <View style={styles.notice}>
           <Text style={styles.noticeTitle}>Local prototype data</Text>
-          <Text style={styles.noticeBody}>Your packs and cards are stored only for this session. No personal details, payments, or account credentials are collected.</Text>
+          <Text style={styles.noticeBody}>Your packs and cards are stored locally on this device. No personal details, payments, or account credentials are collected.</Text>
         </View>
       </View>
     </AppScreen>
