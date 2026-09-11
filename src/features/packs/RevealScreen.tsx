@@ -4,7 +4,7 @@ import { AccessibilityInfo, Animated, Image, PanResponder, Pressable, StyleSheet
 
 import { AppScreen } from '../../components/AppScreen';
 import { formatEuro } from '../../domain/catalog';
-import { DemoPack } from '../../domain/demoCollection';
+import { DemoCard, DemoPack } from '../../domain/demoCollection';
 import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { FINAL_CARD_SUSPENSE_MS, initialRipState, ripFlowReducer } from './ripFlow';
@@ -122,6 +122,8 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   const newCardCount = (pack.revealedCards?.slice(0, visibleCardCount).filter((item) => !knownCardNames.has(item.name)).length) ?? visibleCardCount;
   const isChasePull = card?.rarity === 'Illustration Rare';
   const isRarePull = card?.rarity === 'Rare' || isChasePull;
+  const packTotal = (pack.revealedCards ?? []).reduce((sum, item) => sum + item.marketValueCents, 0);
+  const bestPull = (pack.revealedCards ?? []).reduce<DemoCard | undefined>((best, item) => !best || item.marketValueCents > best.marketValueCents ? item : best, undefined);
   useEffect(() => {
     if (!isRarePull || reduceMotion) return;
     hitPulse.setValue(1);
@@ -154,6 +156,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
       </View>
       {state.phase === 'browsing' ? <><Text style={styles.stackCount}>{9 - (state.visibleIndex ?? 0)} cards remain in the stack</Text><Text style={styles.binderProgress}>{newCardCount} of 10 new cards added to Binder</Text></> : null}
       {state.phase === 'browsing' ? <Pressable accessibilityRole="button" accessibilityLabel="Next card" onPress={next} style={styles.action}><Text style={styles.actionText}>{state.visibleIndex === 8 ? 'Reveal final card' : 'Next card'}</Text></Pressable> : <>
+        <View style={[styles.commitment, { backgroundColor: colors.surfaceRaised, borderColor: colors.violet }]}><Text style={styles.eyebrow}>PACK RECAP</Text><Text style={[styles.value, { color: '#F3D273' }]}>{formatEuro(packTotal)}</Text><Text style={[styles.label, { color: colors.text, marginTop: spacing.sm }]}>Best pull · {bestPull?.name ?? 'Your final card'}</Text><Text style={styles.set}>10 cards added to your Binder</Text></View>
         {onViewBinder ? <Pressable accessibilityRole="button" onPress={onViewBinder} style={styles.action}><Text style={styles.actionText}>View Binder</Text></Pressable> : null}
         {onBrowsePacks ? <Pressable accessibilityRole="button" onPress={onBrowsePacks} style={[styles.action, { backgroundColor: colors.surfaceRaised }]}><Text style={styles.actionText}>Browse packs</Text></Pressable> : null}
         <View style={styles.commitment}><Text style={styles.label}>All 10 cards added to Binder</Text><Text style={styles.code}>Revealed seed {pack.verification?.revealedSeed}</Text><Text style={styles.code}>{pack.verification?.algorithmVersion} · {pack.verification?.cardCount} cards</Text></View>

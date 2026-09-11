@@ -84,6 +84,8 @@ describe('demo pack flow screens', () => {
     await act(async () => { await Promise.resolve(); });
     expect(screen.getByText('Mega Darkrai ex')).toBeTruthy();
     expect(screen.getByText('CHASE PULL')).toBeTruthy();
+    expect(screen.getByText('PACK RECAP')).toBeTruthy();
+    expect(screen.getByText('Best pull · Mega Darkrai ex')).toBeTruthy();
     expect(screen.getByText(/Revealed seed/)).toBeTruthy();
 
     reveal.unmount();
