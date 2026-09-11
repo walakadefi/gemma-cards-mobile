@@ -3,6 +3,13 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { ShopScreen } from './ShopScreen';
 
 describe('ShopScreen', () => {
+  it('starts the featured first rip directly from the welcome panel', () => {
+    const onOpenPack = jest.fn();
+    render(<ShopScreen onOpenPack={onOpenPack} />);
+    fireEvent.press(screen.getByRole('button', { name: 'Start your first rip' }));
+    expect(onOpenPack).toHaveBeenCalledWith('pitch-black');
+  });
+
   it('filters the visible expansion cards by game', () => {
     render(<ShopScreen onOpenPack={() => undefined} />);
 

@@ -56,6 +56,7 @@ export function ShopScreen({ onOpenPack = () => undefined }: ShopScreenProps) {
             <Text style={styles.trust}>✓ Provably fair</Text>
             <Text style={styles.trust}>✓ Live values</Text>
           </View>
+          <Pressable accessibilityRole="button" accessibilityLabel="Start your first rip" onPress={() => onOpenPack(expansions[0].id)} style={styles.firstRip}><Text style={styles.firstRipText}>Start your first rip</Text></Pressable>
         </View>
 
         <View accessibilityLabel="Pack browsing controls" style={styles.controls}>
@@ -147,6 +148,7 @@ const styles = StyleSheet.create({
   subhead: { marginTop: spacing.md, maxWidth: 380, color: colors.textMuted, fontSize: fontSizes.body, lineHeight: 22 },
   trustRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginTop: spacing.lg },
   trust: { color: colors.text, fontSize: fontSizes.caption, fontWeight: '700' },
+  firstRip: { alignSelf: 'flex-start', minHeight: 46, marginTop: spacing.lg, paddingHorizontal: spacing.lg, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.violet }, firstRipText: { color: colors.text, fontWeight: '900' },
   controls: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.md, backgroundColor: colors.background, borderBottomWidth: 1, borderBottomColor: colors.border, zIndex: 2 },
   sectionHeading: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   sectionEyebrow: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
