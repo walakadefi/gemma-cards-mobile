@@ -257,8 +257,8 @@ export function BinderScreen({
             <View style={discovery.summary}>
               <Text style={styles.name}>Your pull, your call</Text>
               <Text style={styles.set}>
-                Keep your cards here and revisit your best pulls. Shipping and
-                trading will be available when the app is connected to Gemma.
+                Keep your cards here and revisit your best pulls. Use card
+                details to preview selling, shipping, or a swap.
               </Text>
             </View>
           ) : null
