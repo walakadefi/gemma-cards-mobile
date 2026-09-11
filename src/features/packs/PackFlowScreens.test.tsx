@@ -17,6 +17,8 @@ describe('demo pack flow screens', () => {
       render(<RevealScreen pack={createDemoPack('pitch-black')} onRip={jest.fn()} onClose={jest.fn()} />);
       await act(async () => { await Promise.resolve(); });
       fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
+      act(() => pending.splice(0).forEach((callback) => callback({ finished: true })));
+      expect(screen.getByText('CARD 1 OF 10')).toBeTruthy();
       fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
       fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
       act(() => pending.splice(0).forEach((callback) => callback({ finished: true })));
@@ -48,6 +50,7 @@ describe('demo pack flow screens', () => {
 
     expect(screen.getByText(/Commitment/)).toBeTruthy();
     expect(screen.getByLabelText('Pitch Black booster pack artwork')).toBeTruthy();
+    expect(screen.getByLabelText('Slide right to tear the pack open')).toBeTruthy();
     expect(screen.getByTestId('reveal-close-icon').props.name).toBe('close');
     fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
     expect(onRip).toHaveBeenCalledTimes(1);
