@@ -1,0 +1,8 @@
+{
+  "name": "@gemma-cards-mobile/app",
+  "version": "0.3.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start-web": "expo export --platform web && echo 'Web export complete: app/web-build/'"
+  }
+}
