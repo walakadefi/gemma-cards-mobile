@@ -104,7 +104,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
       if (finished) dispatch({ type: 'NEXT' });
       else transitioning.current = false;
     });
-  }, [reduceMotion, state.phase, swipeX]);
+  }, [reduceMotion, state.phase, state.visibleIndex, swipeX]);
 
   const tearResponder = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_, gesture) => state.phase === 'sealed' && gesture.dx < -4,
