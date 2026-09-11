@@ -50,6 +50,7 @@ describe('demo pack flow screens', () => {
 
     expect(screen.getByLabelText('Pitch Black booster pack artwork')).toBeTruthy();
     expect(screen.getByText('Slide along the top edge to tear it open')).toBeTruthy();
+    expect(screen.getByText('Start at the tear notch, then drag left.')).toBeTruthy();
     expect(screen.getByLabelText('Slide along the pack top edge to tear it open')).toBeTruthy();
     expect(screen.getByTestId('reveal-close-icon').props.name).toBe('close');
     fireEvent.press(screen.getByRole('button', { name: 'Rip it' }));

@@ -18,6 +18,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   const [reduceMotion, setReduceMotion] = useState(false);
   const tearX = useRef(new Animated.Value(0)).current;
   const ripProgress = useRef(new Animated.Value(0)).current;
+  const ripShakeX = useRef(new Animated.Value(0)).current;
   const swipeX = useRef(new Animated.Value(0)).current;
   const shakeX = useRef(new Animated.Value(0)).current;
   const transitioning = useRef(false);
@@ -25,11 +26,12 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   const mounted = useRef(true);
   const swipeAnimation = useRef<Animated.CompositeAnimation | null>(null);
   const ripAnimation = useRef<Animated.CompositeAnimation | null>(null);
+  const ripImpactAnimation = useRef<Animated.CompositeAnimation | null>(null);
   const expansion = expansions.find((item) => item.id === pack.expansionId);
 
   useEffect(() => {
     mounted.current = true;
-    return () => { mounted.current = false; swipeAnimation.current?.stop(); ripAnimation.current?.stop(); };
+    return () => { mounted.current = false; swipeAnimation.current?.stop(); ripAnimation.current?.stop(); ripImpactAnimation.current?.stop(); };
   }, []);
   useEffect(() => { transitioning.current = false; }, [state.visibleIndex, state.phase]);
 
@@ -60,9 +62,15 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
       dispatch({ type: 'RIP_OPENED' });
       return;
     }
-    ripAnimation.current = Animated.timing(ripProgress, { toValue: 1, duration: 420, useNativeDriver: true });
+    ripAnimation.current = Animated.timing(ripProgress, { toValue: 1, duration: 820, useNativeDriver: true });
+    ripImpactAnimation.current = Animated.sequence([
+      Animated.delay(250),
+      Animated.sequence(Array.from({ length: 4 }, (_, index) => Animated.timing(ripShakeX, { toValue: index % 2 ? 4 : -4, duration: 42, useNativeDriver: true }))),
+      Animated.timing(ripShakeX, { toValue: 0, duration: 70, useNativeDriver: true }),
+    ]);
+    ripImpactAnimation.current.start();
     ripAnimation.current.start(({ finished }) => { if (finished && mounted.current) dispatch({ type: 'RIP_OPENED' }); });
-  }, [onRip, reduceMotion, ripProgress, state.phase]);
+  }, [onRip, reduceMotion, ripProgress, ripShakeX, state.phase]);
   const next = useCallback(() => {
     if (state.phase !== 'browsing' || transitioning.current) return;
     transitioning.current = true;
@@ -77,9 +85,9 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   }, [reduceMotion, state.phase, swipeX]);
 
   const tearResponder = useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: (_, gesture) => state.phase === 'sealed' && gesture.dx > 4,
-    onPanResponderMove: (_, gesture) => tearX.setValue(Math.max(0, Math.min(260, gesture.dx))),
-    onPanResponderRelease: (_, gesture) => gesture.dx > 120 ? rip() : Animated.spring(tearX, { toValue: 0, useNativeDriver: true }).start(),
+    onMoveShouldSetPanResponder: (_, gesture) => state.phase === 'sealed' && gesture.dx < -4,
+    onPanResponderMove: (_, gesture) => tearX.setValue(Math.min(0, Math.max(-190, gesture.dx))),
+    onPanResponderRelease: (_, gesture) => gesture.dx < -120 ? rip() : Animated.spring(tearX, { toValue: 0, useNativeDriver: true }).start(),
   }), [rip, state.phase, tearX]);
 
   const cardResponder = useMemo(() => PanResponder.create({
@@ -96,11 +104,12 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
       <View pointerEvents="none" style={styles.starField}>{stars.map(([left, top, size], index) => <View key={index} style={[styles.star, { left: `${left}%`, top: `${top}%`, width: size, height: size }]} />)}</View>
       <Text style={styles.eyebrow}>SEALED · COMMITTED</Text><Text accessibilityRole="header" style={styles.title}>Rip the pack open</Text>
       <View style={styles.packStage}>
-        {isOpening ? <Animated.View pointerEvents="none" style={[styles.emergingCard, { opacity: ripProgress, transform: [{ translateY: ripProgress.interpolate({ inputRange: [0, 1], outputRange: [100, -46] }) }, { scale: ripProgress.interpolate({ inputRange: [0, 1], outputRange: [0.86, 1] }) }] }]}><Text style={styles.emergingGem}>◆</Text></Animated.View> : null}
-        {expansion ? <Animated.View style={{ opacity: isOpening ? ripProgress.interpolate({ inputRange: [0, 0.45, 1], outputRange: [1, 0.92, 0] }) : 1, transform: [{ translateY: isOpening ? ripProgress.interpolate({ inputRange: [0, 1], outputRange: [0, 42] }) : 0 }] }}><Image accessibilityLabel={`${expansion.name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={styles.packImage} /></Animated.View> : null}
-        {state.phase === 'sealed' ? <View accessibilityLabel="Slide along the pack top edge to tear it open" {...tearResponder.panHandlers} style={styles.tearZone}><View style={styles.tearSeam} /><Animated.View style={[styles.tearHandle, { transform: [{ translateX: tearX }] }]}><Text style={styles.tearText}>↔</Text></Animated.View></View> : null}
+        {isOpening ? <Animated.View pointerEvents="none" style={[styles.foilGlow, { opacity: ripProgress.interpolate({ inputRange: [0, 0.3, 0.8, 1], outputRange: [0, 0.7, 0.45, 0] }), transform: [{ scale: ripProgress.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.35] }) }] }]} /> : null}
+        {isOpening ? <Animated.View pointerEvents="none" style={[styles.emergingCard, { opacity: ripProgress.interpolate({ inputRange: [0, 0.45, 0.7, 1], outputRange: [0, 0, 1, 1] }), transform: [{ perspective: 900 }, { translateY: ripProgress.interpolate({ inputRange: [0, 0.45, 1], outputRange: [110, 110, -46] }) }, { scale: ripProgress.interpolate({ inputRange: [0, 0.45, 1], outputRange: [0.86, 0.86, 1] }) }, { rotateY: ripProgress.interpolate({ inputRange: [0, 0.68, 1], outputRange: ['0deg', '0deg', '360deg'] }) }] }]}><Text style={styles.emergingGem}>◆</Text></Animated.View> : null}
+        {expansion ? <Animated.View style={{ opacity: isOpening ? ripProgress.interpolate({ inputRange: [0, 0.48, 0.82, 1], outputRange: [1, 1, 0.28, 0] }) : 1, transform: [{ translateX: isOpening ? ripShakeX : 0 }, { translateY: isOpening ? ripProgress.interpolate({ inputRange: [0, 1], outputRange: [0, 42] }) : 0 }] }}><Image accessibilityLabel={`${expansion.name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={styles.packImage} /></Animated.View> : null}
+        {state.phase === 'sealed' ? <View accessibilityLabel="Slide along the pack top edge to tear it open" {...tearResponder.panHandlers} style={styles.tearZone}><View style={styles.tearSeam} /><View style={styles.tearNotch} /><Animated.View style={[styles.tearTrail, { transform: [{ scaleX: tearX.interpolate({ inputRange: [-190, 0], outputRange: [1, 0] }) }] }]} /><Animated.View style={[styles.tearHandle, { transform: [{ translateX: tearX }] }]}><Text style={styles.tearText}>←</Text></Animated.View></View> : null}
       </View>
-      {state.phase === 'sealed' ? <><Text style={styles.ripInstruction}>Slide along the top edge to tear it open</Text><Pressable accessibilityRole="button" accessibilityLabel="Rip it" onPress={rip} style={styles.ripAction}><Text style={styles.actionText}>Rip it</Text></Pressable><Text selectable style={styles.commitmentCode}>Commitment · {pack.commitment}</Text></> : null}
+      {state.phase === 'sealed' ? <><Text style={styles.ripInstruction}>Slide along the top edge to tear it open</Text><Text style={styles.ripDirection}>Start at the tear notch, then drag left.</Text><Pressable accessibilityRole="button" accessibilityLabel="Rip it" onPress={rip} style={styles.ripAction}><Text style={styles.actionText}>Rip it</Text></Pressable><Text selectable style={styles.commitmentCode}>Commitment · {pack.commitment}</Text></> : null}
     </> : state.phase === 'suspense' ? <Animated.View style={[styles.suspense, { transform: [{ translateX: shakeX }] }]}><Text style={styles.eyebrow}>FINAL CARD</Text><Text accessibilityRole="header" style={styles.title}>Something is hiding…</Text><View style={styles.cardBack}><Text style={styles.gem}>◆</Text></View></Animated.View> : <>
       <Text style={styles.eyebrow}>CARD {(state.visibleIndex ?? 0) + 1} OF 10</Text><Text accessibilityRole="header" style={styles.title}>{state.phase === 'complete' ? 'The final pull' : 'Swipe for the next card'}</Text>
       <Animated.View {...cardResponder.panHandlers} style={[styles.card, { transform: [{ translateX: swipeX }] }]}><Text style={styles.rarity}>{card?.rarity}</Text><Text style={styles.cardName}>{card?.name ?? 'Preparing card…'}</Text><Text style={styles.set}>{card?.setName}</Text><Text style={styles.value}>{card ? formatEuro(card.marketValueCents) : ''}</Text></Animated.View>
@@ -115,6 +124,6 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, paddingBottom: spacing.xxl }, close: { alignSelf: 'flex-end', width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.surfaceRaised }, eyebrow: { color: colors.violet, fontWeight: '900', letterSpacing: 1.2 }, title: { color: colors.text, fontSize: fontSizes.hero, fontWeight: '900', marginTop: spacing.sm }, body: { color: colors.textMuted, lineHeight: 22, marginTop: spacing.md },
-  commitment: { marginTop: spacing.lg, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }, label: { color: colors.emerald, fontWeight: '900' }, code: { color: colors.textMuted, fontSize: 11, marginTop: spacing.sm }, starField: { position: 'absolute', top: 52, left: 0, right: 0, height: 630 }, star: { position: 'absolute', borderRadius: radii.pill, backgroundColor: '#B88CFF', opacity: 0.55 }, packStage: { height: 420, marginTop: spacing.md, alignItems: 'center', justifyContent: 'center', overflow: 'visible' }, packImage: { width: 220, height: 390 }, emergingCard: { position: 'absolute', width: 188, height: 266, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#24183D', borderWidth: 2, borderColor: colors.violet, shadowColor: colors.violet, shadowOpacity: 0.55, shadowRadius: 18, elevation: 8 }, emergingGem: { color: '#D7C0FF', fontSize: 42 }, tearZone: { position: 'absolute', top: 31, width: 220, height: 38, justifyContent: 'center' }, tearSeam: { height: 2, width: '100%', backgroundColor: '#F6E7A3', shadowColor: '#F6E7A3', shadowOpacity: 0.9, shadowRadius: 7, elevation: 3 }, tearHandle: { position: 'absolute', left: -28, width: 34, height: 34, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: '#7C42F4', borderWidth: 1, borderColor: '#D7C0FF' }, tearText: { color: colors.text, fontWeight: '900', fontSize: 16 }, ripInstruction: { color: colors.textMuted, textAlign: 'center', marginTop: spacing.sm }, ripAction: { alignSelf: 'center', minWidth: 156, minHeight: 48, marginTop: spacing.md, paddingHorizontal: spacing.xl, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.violet }, commitmentCode: { color: colors.textMuted, fontSize: 10, lineHeight: 16, textAlign: 'center', marginTop: spacing.lg, paddingHorizontal: spacing.md },
+  commitment: { marginTop: spacing.lg, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }, label: { color: colors.emerald, fontWeight: '900' }, code: { color: colors.textMuted, fontSize: 11, marginTop: spacing.sm }, starField: { position: 'absolute', top: 52, left: 0, right: 0, height: 630 }, star: { position: 'absolute', borderRadius: radii.pill, backgroundColor: '#B88CFF', opacity: 0.55 }, packStage: { height: 420, marginTop: spacing.md, alignItems: 'center', justifyContent: 'center', overflow: 'visible' }, packImage: { width: 220, height: 390 }, foilGlow: { position: 'absolute', width: 260, height: 260, borderRadius: radii.pill, backgroundColor: '#7C42F4', opacity: 0.5, shadowColor: '#A670FF', shadowOpacity: 1, shadowRadius: 44, elevation: 12 }, emergingCard: { position: 'absolute', width: 188, height: 266, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#24183D', borderWidth: 2, borderColor: colors.violet, shadowColor: colors.violet, shadowOpacity: 0.55, shadowRadius: 18, elevation: 8 }, emergingGem: { color: '#D7C0FF', fontSize: 42 }, tearZone: { position: 'absolute', top: 31, width: 220, height: 38, justifyContent: 'center' }, tearSeam: { height: 2, width: '100%', backgroundColor: '#F6E7A3', shadowColor: '#F6E7A3', shadowOpacity: 0.9, shadowRadius: 7, elevation: 3 }, tearNotch: { position: 'absolute', right: -4, width: 10, height: 18, borderRadius: radii.pill, backgroundColor: '#F6E7A3', shadowColor: '#F6E7A3', shadowOpacity: 0.8, shadowRadius: 8 }, tearTrail: { position: 'absolute', right: 0, height: 3, width: 190, backgroundColor: '#C796FF', shadowColor: '#C796FF', shadowOpacity: 1, shadowRadius: 8 }, tearHandle: { position: 'absolute', right: -28, width: 34, height: 34, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: '#7C42F4', borderWidth: 1, borderColor: '#D7C0FF' }, tearText: { color: colors.text, fontWeight: '900', fontSize: 16 }, ripInstruction: { color: colors.textMuted, textAlign: 'center', marginTop: spacing.sm }, ripDirection: { color: '#B88CFF', fontSize: 12, textAlign: 'center', marginTop: 6 }, ripAction: { alignSelf: 'center', minWidth: 156, minHeight: 48, marginTop: spacing.md, paddingHorizontal: spacing.xl, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.violet }, commitmentCode: { color: colors.textMuted, fontSize: 10, lineHeight: 16, textAlign: 'center', marginTop: spacing.lg, paddingHorizontal: spacing.md },
   action: { minHeight: 56, marginTop: spacing.lg, alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, backgroundColor: colors.violet }, actionText: { color: colors.text, fontWeight: '900' }, card: { height: 410, marginTop: spacing.xl, alignItems: 'center', justifyContent: 'center', borderRadius: 24, backgroundColor: '#24183D', borderWidth: 1, borderColor: colors.violet }, rarity: { color: colors.emerald, fontWeight: '900' }, cardName: { color: colors.text, fontSize: 30, fontWeight: '900', marginTop: spacing.md, textAlign: 'center' }, set: { color: colors.textMuted, marginTop: spacing.sm }, value: { color: colors.emerald, fontSize: 24, fontWeight: '900', marginTop: spacing.lg }, suspense: { alignItems: 'center', marginTop: spacing.xl }, cardBack: { width: 250, height: 350, marginTop: spacing.xl, alignItems: 'center', justifyContent: 'center', borderRadius: 24, backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.violet }, gem: { color: colors.violet, fontSize: 72 },
 });
