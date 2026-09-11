@@ -4,6 +4,7 @@ import { createDemoPack, DemoCard, DemoPack, openDemoPack } from '../domain/demo
 import { CollectionStorage, loadDemoCollection, saveDemoCollection } from './collectionStorage';
 
 interface DemoCollectionValue {
+  hydrated: boolean;
   packs: DemoPack[];
   cards: DemoCard[];
   addPack: (expansionId: string) => string;
@@ -22,6 +23,7 @@ export function DemoCollectionProvider({ children, storage }: { children: ReactN
   const [packs, setPacks] = useState<DemoPack[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const resetDuringHydration = useRef(false);
+  const saveQueue = useRef(Promise.resolve());
 
   useEffect(() => {
     let active = true;
@@ -35,10 +37,11 @@ export function DemoCollectionProvider({ children, storage }: { children: ReactN
 
   useEffect(() => {
     if (!hydrated) return;
-    void saveDemoCollection(storage, packs);
+    saveQueue.current = saveQueue.current.then(() => saveDemoCollection(storage, packs));
   }, [hydrated, packs, storage]);
 
   const value = useMemo<DemoCollectionValue>(() => ({
+    hydrated,
     packs,
     cards: packs.flatMap((pack) => pack.revealedCards ?? []),
     addPack: (expansionId) => {
@@ -53,7 +56,7 @@ export function DemoCollectionProvider({ children, storage }: { children: ReactN
       resetDuringHydration.current = true;
       setPacks([]);
     },
-  }), [packs]);
+  }), [packs, hydrated]);
 
   return <DemoCollectionContext.Provider value={value}>{children}</DemoCollectionContext.Provider>;
 }

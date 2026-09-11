@@ -13,8 +13,9 @@ export default function RevealRoute() {
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();
   const packId = Array.isArray(id) ? id[0] : (id ?? '');
   const router = useRouter();
-  const { packs, openPack } = useDemoCollection();
+  const { packs, openPack, hydrated } = useDemoCollection();
   const pack = packs.find((item) => item.id === packId);
+  if (!hydrated && !pack) return <AppScreen><EmptyState eyebrow="YOUR COLLECTION" title="Loading your pack…" body="Restoring your saved collection." /></AppScreen>;
   if (!pack) return <AppScreen><EmptyState eyebrow="PACK NOT FOUND" title="This demo pack is unavailable" body="Return to My Packs and choose an available pack." /></AppScreen>;
   return <RevealScreen key={pack.id} pack={pack} onRip={() => openPack(pack.id)} onClose={() => router.replace('/packs')} onViewBinder={() => router.replace('/binder')} onBrowsePacks={() => router.replace('/')} />;
 }
