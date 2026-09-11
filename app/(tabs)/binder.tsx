@@ -5,5 +5,5 @@ import { useDemoCollection } from '../../src/state/DemoCollectionContext';
 export default function BinderScreen() {
   const router = useRouter();
   const { cards } = useDemoCollection();
-  return <BinderCollectionScreen cards={cards} onShip={() => router.push('/vault')} />;
+  return <BinderCollectionScreen cards={cards} onShip={() => router.push('/vault')} onTrade={() => router.push('/swap')} />;
 }
