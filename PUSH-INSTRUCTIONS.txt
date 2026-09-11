@@ -1,0 +1,11 @@
+# YOUR EXACT NEXT COMMANDS (Paste into CMD/PowerShell):
+
+cd "C:/Users/mikae/Documents/ChatGPT/Gemma"
+
+git push -u origin main
+
+# After GitHub accepts the code, you'll see:
+# - Remote branch main created locally as tracking ref
+# - Upload complete (you may see "Enumerating objects..." progress bars)
+
+# This pushes your code live to https://github.com/YOUR_USERNAME/gemma-cards-mobile
