@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, Image, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, Animated, Image, PanResponder, Pressable, StyleSheet, Text, Vibration, View } from 'react-native';
 
 import { AppScreen } from '../../components/AppScreen';
 import { formatEuro } from '../../domain/catalog';
@@ -75,6 +75,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   const rip = useCallback(() => {
     if (!mounted.current || hasRipped.current || state.phase !== 'sealed') return;
     hasRipped.current = true;
+    Vibration.vibrate(18);
     onRip();
     dispatch({ type: 'START_RIP' });
     if (reduceMotion) {
@@ -94,6 +95,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   const next = useCallback(() => {
     if (state.phase !== 'browsing' || transitioning.current) return;
     transitioning.current = true;
+    Vibration.vibrate(state.visibleIndex === 8 ? [0, 35, 45, 55] : 10);
     if (reduceMotion) { dispatch({ type: 'NEXT' }); return; }
     swipeAnimation.current = Animated.timing(swipeX, { toValue: -420, duration: 180, useNativeDriver: true });
     swipeAnimation.current.start(({ finished }) => {
