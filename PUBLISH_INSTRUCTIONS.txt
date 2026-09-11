@@ -1,0 +1,10 @@
+# HOW TO PUBLISH YOUR APP LATER (save this):
+# 
+# 1) Run in your CMD/Terminal (run as admin PowerShell if needed):
+#    npm install -g @expo/cli
+#     
+# 2) Deploy web app:
+#    cd "C:/Users/mikae/Documents/ChatGPT/Gemma"
+#    npx expo publish --web-only
+#
+# 3) Check deployment status at: https://expo.dev/accounts/coolboy11s-team/projects

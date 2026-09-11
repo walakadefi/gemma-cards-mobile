@@ -8,6 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "build": "expo export --platform web",
     "native:config": "expo config --type public",
     "native:prebuild:android": "expo prebuild --platform android --no-install",
     "native:prebuild:ios": "expo prebuild --platform ios --no-install",
