@@ -1,22 +1,18 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Animated, StyleSheet, ImageBackground } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-interface CardSlotProps {
-  condition: 'mint' | 'near-mint';
+interface RevealProps {
+  setId: string; // Set ID (pbl, asc, op16, etc.)  
 }
 
-export default function Reveal([setId]) {
-  return (
-    <View>
-      {/* Last card suspense animation */}
-      {cardNumber === 10 && (
-        <Animated.View {...}>
-          <Text>Suspense...</Text>
-        </Animated.View>
-      )}
-      
-      {/* Card displays */}
-      {[...Array(10)].map(...)}
-    </View>
-  );
-}
+export default function Reveal({setId}:RevealProps) {
+  const [cardNumber, setCardNumber] = useState(0);
+  const shakeAnim = new Animated.Value(0);
+
+  useEffect(() => {
+    // Card 10 suspense: shake for 500ms before reveal
+    if(cardNumber ===9){
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(shakeAnim, {duration:50,startDelay:0,toValue:10}, useNativeDriver:true ),
