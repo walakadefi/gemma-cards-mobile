@@ -66,6 +66,7 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
           <Stat value={`${summary.cardCount} cards`} label="Binder cards" />
           <Stat value={formatEuro(summary.collectionValueCents)} label="Collection value" accent />
         </View>
+        {summary.bestPullName ? <View style={styles.bestPull}><Text style={styles.cardLabel}>BEST PULL</Text><Text style={styles.bestPullName}>{summary.bestPullName}</Text></View> : null}
 
         <Text style={styles.sectionTitle}>Account information</Text>
         <View style={styles.detailsCard}>
@@ -129,6 +130,7 @@ const styles = StyleSheet.create({
   statValue: { color: colors.text, fontSize: 19, fontWeight: '900' },
   statValueAccent: { color: colors.emerald },
   statLabel: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption },
+  bestPull: { padding: spacing.md, borderRadius: radii.md, backgroundColor: '#2A2037', borderWidth: 1, borderColor: '#F5C451' }, bestPullName: { marginTop: spacing.xs, color: '#F5C451', fontSize: 20, fontWeight: '900' },
   detailsCard: { paddingHorizontal: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   detail: { minHeight: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.border },
   detailLast: { borderBottomWidth: 0 },
