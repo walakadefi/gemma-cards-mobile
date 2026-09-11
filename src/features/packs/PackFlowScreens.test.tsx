@@ -20,6 +20,7 @@ describe('demo pack flow screens', () => {
       act(() => pending.splice(0).forEach((callback) => callback({ finished: true })));
       expect(screen.getByText('CARD 1 OF 10')).toBeTruthy();
       expect(screen.getByText('9 cards remain in the stack')).toBeTruthy();
+      expect(screen.getByLabelText('Swipe left to throw this card forward')).toBeTruthy();
       fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
       fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
       act(() => pending.splice(0).forEach((callback) => callback({ finished: true })));
