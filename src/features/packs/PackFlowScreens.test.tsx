@@ -16,7 +16,7 @@ describe('demo pack flow screens', () => {
     try {
       render(<RevealScreen pack={createDemoPack('pitch-black')} onRip={jest.fn()} onClose={jest.fn()} />);
       await act(async () => { await Promise.resolve(); });
-      fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
+      fireEvent.press(screen.getByRole('button', { name: 'Rip it' }));
       act(() => pending.splice(0).forEach((callback) => callback({ finished: true })));
       expect(screen.getByText('CARD 1 OF 10')).toBeTruthy();
       fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
@@ -42,19 +42,19 @@ describe('demo pack flow screens', () => {
     expect(onOpen).toHaveBeenCalledWith(pack.id);
   });
 
-  it('shows canonical pack art and provides an accessible rip action', async () => {
+  it('uses a top-edge tear interaction with a compact fallback rip action', async () => {
     const onRip = jest.fn();
     const pack = createDemoPack('pitch-black');
-    render(<RevealScreen pack={pack} onRip={onRip} onClose={jest.fn()} />);
+    const reveal = render(<RevealScreen pack={pack} onRip={onRip} onClose={jest.fn()} />);
     await act(async () => { await Promise.resolve(); });
 
-    expect(screen.getByText(/Commitment/)).toBeTruthy();
     expect(screen.getByLabelText('Pitch Black booster pack artwork')).toBeTruthy();
-    expect(screen.getByLabelText('Torn pack top artwork').props.resizeMode).toBe('contain');
-    expect(screen.getByLabelText('Slide right to tear the pack open')).toBeTruthy();
+    expect(screen.getByText('Slide along the top edge to tear it open')).toBeTruthy();
+    expect(screen.getByLabelText('Slide along the pack top edge to tear it open')).toBeTruthy();
     expect(screen.getByTestId('reveal-close-icon').props.name).toBe('close');
-    fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Rip it' }));
     expect(onRip).toHaveBeenCalledTimes(1);
+    reveal.unmount();
   });
 
   it('puts a newly prepared sealed pack ahead of an older opened pack', () => {
