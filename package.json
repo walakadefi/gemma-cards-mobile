@@ -8,12 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "native:config": "expo config --type public",
-    "native:prebuild:android": "expo prebuild --platform android --no-install",
-    "native:prebuild:ios": "expo prebuild --platform ios --no-install",
-    "test": "jest",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "export-web": "npx expo export --platform=web",
+    "build": "npm run export-web"
   },
   "dependencies": {
     "expo": "~54.0.0",
@@ -34,7 +30,7 @@
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.1.10",
-    "babel-preset-expo": "~54.0.12",
+    "babel-preset-expo": "~10.0.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "jest": "^29.7.0",
