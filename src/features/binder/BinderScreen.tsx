@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { FilterChip } from '../../components/FilterChip';
 import { AppHeader } from '../../components/AppHeader';
 import { AppScreen } from '../../components/AppScreen';
@@ -13,6 +13,7 @@ export function BinderScreen({ cards }: { cards: DemoCard[] }) {
   const [rarity, setRarity] = useState('All');
   const [highestFirst, setHighestFirst] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [detailCard, setDetailCard] = useState<DemoCard | null>(null);
   const selectedCards = cards.filter((card) => selectedIds.includes(card.id));
   // Prototype estimate: round each card down to whole coins, not a live offer.
   const buybackCoins = selectedCards.reduce((sum, card) => sum + Math.floor(card.marketValueCents * 0.75), 0);
@@ -54,16 +55,17 @@ export function BinderScreen({ cards }: { cards: DemoCard[] }) {
     </>}
     ListEmptyComponent={cards.length === 0 ? <EmptyState eyebrow="YOUR FIRST PULL" title="Your pulls will live here" body="Open a pack from My Packs to add all ten cards to your collection." /> : <View style={discovery.summary}><Text style={styles.name}>No matching cards</Text><Text style={styles.set}>Try another name, set, or rarity.</Text><Pressable accessibilityRole="button" onPress={() => { setQuery(''); setRarity('All'); }} style={discovery.reset}><Text style={discovery.best}>Show all cards</Text></Pressable></View>}
     renderItem={({ item: card }) => <View testID="binder-card" style={[styles.card, discovery.card, { borderColor: card.rarity === 'Illustration Rare' ? '#F5C451' : card.rarity === 'Rare' ? colors.violet : colors.border }]}><Text style={[styles.rarity, card.rarity === 'Illustration Rare' && discovery.best]}>{card.rarity}</Text><Text style={styles.name}>{card.name}</Text><Text style={styles.set}>{card.setName}</Text><Text style={styles.value}>{formatEuro(card.marketValueCents)}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={`View details for ${card.name}`} onPress={() => setDetailCard(card)} style={discovery.details}><Text style={discovery.selectText}>View details</Text></Pressable>
       <Pressable accessibilityRole="checkbox" accessibilityLabel={`Preview buyback for ${card.name}`} accessibilityState={{ checked: selectedIds.includes(card.id) }} onPress={() => setSelectedIds((ids) => ids.includes(card.id) ? ids.filter((id) => id !== card.id) : [...ids, card.id])} style={[discovery.select, selectedIds.includes(card.id) && discovery.selected]}>
         <Text style={discovery.selectText}>{selectedIds.includes(card.id) ? '✓ Selected' : '+ Buyback preview'}</Text>
       </Pressable>
     </View>}
     ListFooterComponent={cards.length > 0 ? <View style={discovery.summary}><Text style={styles.name}>Your pull, your call</Text><Text style={styles.set}>Keep your cards here and revisit your best pulls. Shipping and trading will be available when the app is connected to Gemma.</Text></View> : null}
-  /></AppScreen>;
+  /><Modal transparent visible={detailCard !== null} animationType="slide" onRequestClose={() => setDetailCard(null)}><View style={discovery.modalBackdrop}><View accessibilityViewIsModal style={discovery.detailSheet}>{detailCard ? <><Text style={styles.eyebrow}>CARD DETAILS</Text><Text style={styles.name}>{detailCard.name}</Text><Text style={styles.set}>{detailCard.setName} · {detailCard.rarity}</Text><Text style={styles.value}>{formatEuro(detailCard.marketValueCents)}</Text><Text style={styles.set}>Market value · demo estimate</Text><View style={discovery.detailActions}><Pressable accessibilityRole="button" accessibilityLabel={`Sell ${detailCard.name}`} style={discovery.detailAction}><Text style={discovery.selectText}>Sell</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel={`Ship ${detailCard.name}`} style={discovery.detailAction}><Text style={discovery.selectText}>Ship</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel={`Trade ${detailCard.name}`} style={discovery.detailAction}><Text style={discovery.selectText}>Trade</Text></Pressable></View><Text style={styles.set}>Demo actions only — no sale, shipment, or trade is created.</Text><Pressable accessibilityRole="button" accessibilityLabel="Close card details" onPress={() => setDetailCard(null)} style={discovery.close}><Text style={discovery.selectText}>Done</Text></Pressable></> : null}</View></View></Modal></AppScreen>;
 }
 const discovery = StyleSheet.create({
   row: { gap: spacing.md }, card: { flex: 1, minWidth: 0 },
-  select: { minHeight: 48, marginTop: spacing.md, padding: spacing.sm, borderRadius: radii.md, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
+  select: { minHeight: 48, marginTop: spacing.md, padding: spacing.sm, borderRadius: radii.md, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' }, details: { minHeight: 42, marginTop: spacing.md, padding: spacing.sm, borderRadius: radii.md, backgroundColor: colors.surfaceRaised, alignItems: 'center', justifyContent: 'center' },
   selected: { backgroundColor: colors.violet, borderColor: colors.violet },
   selectText: { color: colors.text, fontWeight: '700', textAlign: 'center' },
   summary: { padding: spacing.lg, marginVertical: spacing.md, backgroundColor: colors.surfaceRaised, borderRadius: radii.lg },
@@ -71,6 +73,6 @@ const discovery = StyleSheet.create({
   best: { color: '#F5C451', fontWeight: '800', marginTop: spacing.sm },
   search: { minHeight: 48, paddingHorizontal: spacing.md, color: colors.text, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radii.md, marginBottom: spacing.md },
   filters: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md },
-  results: { color: colors.textMuted, marginBottom: spacing.md }, reset: { minHeight: 44, justifyContent: 'center' },
+  results: { color: colors.textMuted, marginBottom: spacing.md }, reset: { minHeight: 44, justifyContent: 'center' }, modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.7)' }, detailSheet: { padding: spacing.xl, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, backgroundColor: colors.surface }, detailActions: { flexDirection: 'row', gap: spacing.sm, marginVertical: spacing.lg }, detailAction: { flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, backgroundColor: colors.violet }, close: { minHeight: 50, marginTop: spacing.lg, alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, backgroundColor: colors.surfaceRaised },
 });
 const styles = StyleSheet.create({ content: { padding: spacing.lg, gap: spacing.md }, eyebrow: { color: colors.violet, fontWeight: '900' }, title: { color: colors.text, fontSize: fontSizes.title, fontWeight: '900' }, card: { padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }, rarity: { color: colors.violet, fontWeight: '900' }, name: { color: colors.text, fontSize: 22, fontWeight: '900', marginTop: spacing.sm }, set: { color: colors.textMuted, marginTop: spacing.xs }, value: { color: colors.emerald, fontSize: fontSizes.title, fontWeight: '900', marginTop: spacing.md } });

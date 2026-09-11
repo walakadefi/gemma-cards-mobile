@@ -27,6 +27,7 @@ it('sorts by value without mutating saved collection order', () => {
   render(<BinderScreen cards={cards} />);
   fireEvent.press(screen.getByRole('button', { name: 'Highest value' }));
   expect(screen.getAllByTestId('binder-card')[0].findAllByProps({ children: 'Darkrai' }).length).toBeGreaterThan(0);
+  expect(screen.getByRole('button', { name: 'View details for Darkrai' })).toBeTruthy();
   expect(cards.map((card) => card.id)).toEqual(['a', 'b', 'c']);
   fireEvent.press(screen.getByRole('button', { name: 'Collection order' }));
   expect(screen.getAllByTestId('binder-card')[0].findAllByProps({ children: 'Murkrow' }).length).toBeGreaterThan(0);
