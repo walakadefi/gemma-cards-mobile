@@ -50,6 +50,7 @@ describe('demo pack flow screens', () => {
 
     expect(screen.getByText(/Commitment/)).toBeTruthy();
     expect(screen.getByLabelText('Pitch Black booster pack artwork')).toBeTruthy();
+    expect(screen.getByLabelText('Torn pack top artwork').props.resizeMode).toBe('contain');
     expect(screen.getByLabelText('Slide right to tear the pack open')).toBeTruthy();
     expect(screen.getByTestId('reveal-close-icon').props.name).toBe('close');
     fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
