@@ -15,7 +15,17 @@ export function RevealScreen({ pack, onRip, onClose }: { pack: DemoPack; onRip: 
   const tearX = useRef(new Animated.Value(0)).current;
   const swipeX = useRef(new Animated.Value(0)).current;
   const shakeX = useRef(new Animated.Value(0)).current;
+  const transitioning = useRef(false);
+  const hasRipped = useRef(pack.status === 'revealed');
+  const mounted = useRef(true);
+  const swipeAnimation = useRef<Animated.CompositeAnimation | null>(null);
   const expansion = expansions.find((item) => item.id === pack.expansionId);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; swipeAnimation.current?.stop(); };
+  }, []);
+  useEffect(() => { transitioning.current = false; }, [state.visibleIndex, state.phase]);
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -34,11 +44,23 @@ export function RevealScreen({ pack, onRip, onClose }: { pack: DemoPack; onRip: 
     return () => sequence.stop();
   }, [reduceMotion, shakeX, state.phase]);
 
-  const rip = useCallback(() => { onRip(); dispatch({ type: 'RIP' }); }, [onRip]);
+  const rip = useCallback(() => {
+    if (!mounted.current || hasRipped.current) return;
+    hasRipped.current = true;
+    onRip();
+    dispatch({ type: 'RIP' });
+  }, [onRip]);
   const next = useCallback(() => {
-    if (state.phase !== 'browsing') return;
+    if (state.phase !== 'browsing' || transitioning.current) return;
+    transitioning.current = true;
     if (reduceMotion) { dispatch({ type: 'NEXT' }); return; }
-    Animated.timing(swipeX, { toValue: -420, duration: 180, useNativeDriver: true }).start(() => { swipeX.setValue(0); dispatch({ type: 'NEXT' }); });
+    swipeAnimation.current = Animated.timing(swipeX, { toValue: -420, duration: 180, useNativeDriver: true });
+    swipeAnimation.current.start(({ finished }) => {
+      if (!mounted.current) return;
+      swipeX.setValue(0);
+      if (finished) dispatch({ type: 'NEXT' });
+      else transitioning.current = false;
+    });
   }, [reduceMotion, state.phase, swipeX]);
 
   const tearResponder = useMemo(() => PanResponder.create({
@@ -48,7 +70,7 @@ export function RevealScreen({ pack, onRip, onClose }: { pack: DemoPack; onRip: 
   }), [reduceMotion, rip, state.phase, tearX]);
 
   const cardResponder = useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: (_, gesture) => state.phase === 'browsing' && Math.abs(gesture.dx) > 8,
+    onMoveShouldSetPanResponder: (_, gesture) => state.phase === 'browsing' && !transitioning.current && Math.abs(gesture.dx) > 8,
     onPanResponderMove: (_, gesture) => swipeX.setValue(Math.min(0, gesture.dx)),
     onPanResponderRelease: (_, gesture) => gesture.dx < -70 ? next() : Animated.spring(swipeX, { toValue: 0, useNativeDriver: true }).start(),
   }), [next, state.phase, swipeX]);

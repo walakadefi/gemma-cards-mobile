@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { Animated } from 'react-native';
 
 import { createDemoPack, openDemoPack } from '../../domain/demoCollection';
 import { BinderScreen } from '../binder/BinderScreen';
@@ -6,6 +7,28 @@ import { MyPacksScreen } from './MyPacksScreen';
 import { RevealScreen } from './RevealScreen';
 
 describe('demo pack flow screens', () => {
+  it('advances only once when next is pressed repeatedly during an animation', async () => {
+    let finish: ((result: { finished: boolean }) => void) | undefined;
+    const pending: ((result: { finished: boolean }) => void)[] = [];
+    const timing = jest.spyOn(Animated, 'timing').mockImplementation(() => ({
+      start: (callback) => { finish = callback; if (callback) pending.push(callback); }, stop: jest.fn(), reset: jest.fn(),
+    }));
+    try {
+      render(<RevealScreen pack={createDemoPack('pitch-black')} onRip={jest.fn()} onClose={jest.fn()} />);
+      await act(async () => { await Promise.resolve(); });
+      fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
+      fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
+      fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
+      act(() => pending.splice(0).forEach((callback) => callback({ finished: true })));
+      expect(screen.getByText('CARD 2 OF 10')).toBeTruthy();
+      fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
+      act(() => finish?.({ finished: false }));
+      expect(screen.getByText('CARD 2 OF 10')).toBeTruthy();
+      fireEvent.press(screen.getByRole('button', { name: 'Next card' }));
+      act(() => finish?.({ finished: true }));
+      expect(screen.getByText('CARD 3 OF 10')).toBeTruthy();
+    } finally { timing.mockRestore(); }
+  });
   it('shows a sealed pack and opens it', () => {
     const onOpen = jest.fn();
     const pack = createDemoPack('pitch-black');
