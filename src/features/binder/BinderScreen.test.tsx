@@ -31,3 +31,25 @@ it('sorts by value without mutating saved collection order', () => {
   fireEvent.press(screen.getByRole('button', { name: 'Collection order' }));
   expect(screen.getAllByTestId('binder-card')[0].findAllByProps({ children: 'Murkrow' }).length).toBeGreaterThan(0);
 });
+
+it('previews selected buyback coins across filters without changing the collection', () => {
+  render(<BinderScreen cards={cards} />);
+  fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Murkrow' }));
+  fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Darkrai' }));
+  expect(screen.getByLabelText('Estimated buyback 25,960 coins')).toBeTruthy();
+  fireEvent.changeText(screen.getByLabelText('Search collection'), 'Nami');
+  expect(screen.getByText('2 cards selected')).toBeTruthy();
+  expect(screen.getByLabelText('Estimated buyback 25,960 coins')).toBeTruthy();
+  expect(screen.getByLabelText('Total collection value €351.14')).toBeTruthy();
+  fireEvent.press(screen.getByRole('button', { name: 'Clear buyback selection' }));
+  expect(screen.getByLabelText('Estimated buyback 0 coins')).toBeTruthy();
+  expect(cards).toHaveLength(3);
+});
+
+it('excludes removed cards from the buyback preview', () => {
+  const { rerender } = render(<BinderScreen cards={cards} />);
+  fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Nami' }));
+  expect(screen.getByLabelText('Estimated buyback 375 coins')).toBeTruthy();
+  rerender(<BinderScreen cards={cards.slice(0, 2)} />);
+  expect(screen.getByLabelText('Estimated buyback 0 coins')).toBeTruthy();
+});

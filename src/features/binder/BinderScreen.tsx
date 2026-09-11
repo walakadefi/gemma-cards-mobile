@@ -4,7 +4,7 @@ import { FilterChip } from '../../components/FilterChip';
 import { AppHeader } from '../../components/AppHeader';
 import { AppScreen } from '../../components/AppScreen';
 import { EmptyState } from '../../components/EmptyState';
-import { formatEuro } from '../../domain/catalog';
+import { formatCoins, formatEuro } from '../../domain/catalog';
 import { DemoCard } from '../../domain/demoCollection';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 
@@ -12,6 +12,10 @@ export function BinderScreen({ cards }: { cards: DemoCard[] }) {
   const [query, setQuery] = useState('');
   const [rarity, setRarity] = useState('All');
   const [highestFirst, setHighestFirst] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const selectedCards = cards.filter((card) => selectedIds.includes(card.id));
+  // Prototype estimate: round each card down to whole coins, not a live offer.
+  const buybackCoins = selectedCards.reduce((sum, card) => sum + Math.floor(card.marketValueCents * 0.75), 0);
   const columns = useWindowDimensions().width >= 400 ? 2 : 1;
   const total = cards.reduce((sum, card) => sum + card.marketValueCents, 0);
   const best = cards.reduce<DemoCard | undefined>((hit, card) => !hit || card.marketValueCents > hit.marketValueCents ? card : hit, undefined);
@@ -33,6 +37,15 @@ export function BinderScreen({ cards }: { cards: DemoCard[] }) {
         {best ? <Text style={discovery.best}>Best pull · {best.name}</Text> : null}
       </View>
       {cards.length > 0 ? <>
+        <View style={discovery.summary}>
+          <Text style={styles.eyebrow}>BUYBACK · PREVIEW</Text>
+          <Text style={styles.name}>Keep it or keep ripping</Text>
+          <Text style={styles.set}>Select cards below to estimate a 75% return in coins. Your cards stay in your Binder.</Text>
+          <Text accessibilityLiveRegion="polite" accessibilityLabel={`Estimated buyback ${formatCoins(buybackCoins)} coins`} style={styles.value}>{formatCoins(buybackCoins)} coins</Text>
+          <Text style={styles.set}>{selectedCards.length} {selectedCards.length === 1 ? 'card' : 'cards'} selected</Text>
+          <Text style={styles.set}>Demo values · 100 coins = €1 · rounded down per card. No cash payout or wallet credit.</Text>
+          {selectedCards.length > 0 ? <Pressable accessibilityRole="button" accessibilityLabel="Clear buyback selection" onPress={() => setSelectedIds([])} style={discovery.reset}><Text style={discovery.best}>Clear selection</Text></Pressable> : null}
+        </View>
         <TextInput accessibilityLabel="Search collection" placeholder="Search cards or sets" placeholderTextColor={colors.textMuted} value={query} onChangeText={setQuery} autoCapitalize="none" autoCorrect={false} style={discovery.search} />
         <View style={discovery.filters}>{['All', 'Common', 'Rare', 'Illustration Rare'].map((item) => <FilterChip key={item} label={item} accessibilityLabel={`Filter collection: ${item}`} selected={rarity === item} onPress={() => setRarity(item)} />)}</View>
         <View style={discovery.filters}><FilterChip label="Collection order" selected={!highestFirst} onPress={() => setHighestFirst(false)} /><FilterChip label="Highest value" selected={highestFirst} onPress={() => setHighestFirst(true)} /></View>
@@ -40,12 +53,19 @@ export function BinderScreen({ cards }: { cards: DemoCard[] }) {
       </> : null}
     </>}
     ListEmptyComponent={cards.length === 0 ? <EmptyState eyebrow="YOUR FIRST PULL" title="Your pulls will live here" body="Open a pack from My Packs to add all ten cards to your collection." /> : <View style={discovery.summary}><Text style={styles.name}>No matching cards</Text><Text style={styles.set}>Try another name, set, or rarity.</Text><Pressable accessibilityRole="button" onPress={() => { setQuery(''); setRarity('All'); }} style={discovery.reset}><Text style={discovery.best}>Show all cards</Text></Pressable></View>}
-    renderItem={({ item: card }) => <View testID="binder-card" style={[styles.card, discovery.card, { borderColor: card.rarity === 'Illustration Rare' ? '#F5C451' : card.rarity === 'Rare' ? colors.violet : colors.border }]}><Text style={[styles.rarity, card.rarity === 'Illustration Rare' && discovery.best]}>{card.rarity}</Text><Text style={styles.name}>{card.name}</Text><Text style={styles.set}>{card.setName}</Text><Text style={styles.value}>{formatEuro(card.marketValueCents)}</Text></View>}
+    renderItem={({ item: card }) => <View testID="binder-card" style={[styles.card, discovery.card, { borderColor: card.rarity === 'Illustration Rare' ? '#F5C451' : card.rarity === 'Rare' ? colors.violet : colors.border }]}><Text style={[styles.rarity, card.rarity === 'Illustration Rare' && discovery.best]}>{card.rarity}</Text><Text style={styles.name}>{card.name}</Text><Text style={styles.set}>{card.setName}</Text><Text style={styles.value}>{formatEuro(card.marketValueCents)}</Text>
+      <Pressable accessibilityRole="checkbox" accessibilityLabel={`Preview buyback for ${card.name}`} accessibilityState={{ checked: selectedIds.includes(card.id) }} onPress={() => setSelectedIds((ids) => ids.includes(card.id) ? ids.filter((id) => id !== card.id) : [...ids, card.id])} style={[discovery.select, selectedIds.includes(card.id) && discovery.selected]}>
+        <Text style={discovery.selectText}>{selectedIds.includes(card.id) ? '✓ Selected' : '+ Buyback preview'}</Text>
+      </Pressable>
+    </View>}
     ListFooterComponent={cards.length > 0 ? <View style={discovery.summary}><Text style={styles.name}>Your pull, your call</Text><Text style={styles.set}>Keep your cards here and revisit your best pulls. Shipping and trading will be available when the app is connected to Gemma.</Text></View> : null}
   /></AppScreen>;
 }
 const discovery = StyleSheet.create({
   row: { gap: spacing.md }, card: { flex: 1, minWidth: 0 },
+  select: { minHeight: 48, marginTop: spacing.md, padding: spacing.sm, borderRadius: radii.md, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
+  selected: { backgroundColor: colors.violet, borderColor: colors.violet },
+  selectText: { color: colors.text, fontWeight: '700', textAlign: 'center' },
   summary: { padding: spacing.lg, marginVertical: spacing.md, backgroundColor: colors.surfaceRaised, borderRadius: radii.lg },
   total: { color: colors.text, fontSize: 32, fontWeight: '900', marginTop: spacing.sm },
   best: { color: '#F5C451', fontWeight: '800', marginTop: spacing.sm },
