@@ -1,4 +1,18 @@
 {
-  "buildCommand": "npm install && npx expo export --platform web",
-  "outputDirectory": ".expo/www"
+  "buildCommand": "npx expo export --platform=web",
+  "outputDirectory": ".expo/www",
+  "env": {
+    "EXPO_PUBLIC_NAME": "Gemma Cards"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    }
+  ]
 }
