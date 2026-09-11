@@ -81,6 +81,7 @@ describe('demo pack flow screens', () => {
     const reveal = render(<RevealScreen pack={pack} onRip={jest.fn()} onClose={jest.fn()} />);
     await act(async () => { await Promise.resolve(); });
     expect(screen.getByText('Mega Darkrai ex')).toBeTruthy();
+    expect(screen.getByText('CHASE PULL')).toBeTruthy();
     expect(screen.getByText(/Revealed seed/)).toBeTruthy();
 
     reveal.unmount();
