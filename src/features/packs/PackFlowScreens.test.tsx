@@ -35,6 +35,7 @@ describe('demo pack flow screens', () => {
     render(<MyPacksScreen packs={[pack]} onOpen={onOpen} />);
 
     expect(screen.getByText('SEALED DEMO PACK')).toBeTruthy();
+    expect(screen.getByLabelText('Pitch Black booster pack artwork')).toBeTruthy();
     fireEvent.press(screen.getByRole('button', { name: 'Open Pitch Black demo pack' }));
     expect(onOpen).toHaveBeenCalledWith(pack.id);
   });
@@ -50,6 +51,15 @@ describe('demo pack flow screens', () => {
     expect(screen.getByTestId('reveal-close-icon').props.name).toBe('close');
     fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
     expect(onRip).toHaveBeenCalledTimes(1);
+  });
+  it('offers Binder and shop destinations after a reveal', () => {
+    const onViewBinder = jest.fn();
+    const onBrowsePacks = jest.fn();
+    render(<RevealScreen pack={openDemoPack(createDemoPack('pitch-black'))} onRip={jest.fn()} onClose={jest.fn()} onViewBinder={onViewBinder} onBrowsePacks={onBrowsePacks} />);
+    fireEvent.press(screen.getByRole('button', { name: 'View Binder' }));
+    expect(onViewBinder).toHaveBeenCalledTimes(1);
+    fireEvent.press(screen.getByRole('button', { name: 'Browse packs' }));
+    expect(onBrowsePacks).toHaveBeenCalledTimes(1);
   });
 
   it('shows the final card and all ten cards in the binder', async () => {

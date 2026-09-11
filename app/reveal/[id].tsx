@@ -16,5 +16,5 @@ export default function RevealRoute() {
   const { packs, openPack } = useDemoCollection();
   const pack = packs.find((item) => item.id === packId);
   if (!pack) return <AppScreen><EmptyState eyebrow="PACK NOT FOUND" title="This demo pack is unavailable" body="Return to My Packs and choose an available pack." /></AppScreen>;
-  return <RevealScreen pack={pack} onRip={() => openPack(pack.id)} onClose={() => router.replace('/packs')} />;
+  return <RevealScreen key={pack.id} pack={pack} onRip={() => openPack(pack.id)} onClose={() => router.replace('/packs')} onViewBinder={() => router.replace('/binder')} onBrowsePacks={() => router.replace('/')} />;
 }

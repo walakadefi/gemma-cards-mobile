@@ -9,7 +9,7 @@ import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { FINAL_CARD_SUSPENSE_MS, initialRipState, ripFlowReducer } from './ripFlow';
 
-export function RevealScreen({ pack, onRip, onClose }: { pack: DemoPack; onRip: () => void; onClose: () => void }) {
+export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks }: { pack: DemoPack; onRip: () => void; onClose: () => void; onViewBinder?: () => void; onBrowsePacks?: () => void }) {
   const [state, dispatch] = useReducer(ripFlowReducer, pack.status === 'revealed' ? { phase: 'complete', visibleIndex: 9 } : initialRipState);
   const [reduceMotion, setReduceMotion] = useState(false);
   const tearX = useRef(new Animated.Value(0)).current;
@@ -90,6 +90,8 @@ export function RevealScreen({ pack, onRip, onClose }: { pack: DemoPack; onRip: 
       <Text style={styles.eyebrow}>CARD {(state.visibleIndex ?? 0) + 1} OF 10</Text><Text accessibilityRole="header" style={styles.title}>{state.phase === 'complete' ? 'The final pull' : 'Swipe for the next card'}</Text>
       <Animated.View {...cardResponder.panHandlers} style={[styles.card, { transform: [{ translateX: swipeX }] }]}><Text style={styles.rarity}>{card?.rarity}</Text><Text style={styles.cardName}>{card?.name ?? 'Preparing card…'}</Text><Text style={styles.set}>{card?.setName}</Text><Text style={styles.value}>{card ? formatEuro(card.marketValueCents) : ''}</Text></Animated.View>
       {state.phase === 'browsing' ? <Pressable accessibilityRole="button" accessibilityLabel="Next card" onPress={next} style={styles.action}><Text style={styles.actionText}>{state.visibleIndex === 8 ? 'Reveal final card' : 'Next card'}</Text></Pressable> : <>
+        {onViewBinder ? <Pressable accessibilityRole="button" onPress={onViewBinder} style={styles.action}><Text style={styles.actionText}>View Binder</Text></Pressable> : null}
+        {onBrowsePacks ? <Pressable accessibilityRole="button" onPress={onBrowsePacks} style={[styles.action, { backgroundColor: colors.surfaceRaised }]}><Text style={styles.actionText}>Browse packs</Text></Pressable> : null}
         <View style={styles.commitment}><Text style={styles.label}>All 10 cards added to Binder</Text><Text style={styles.code}>Revealed seed {pack.verification?.revealedSeed}</Text><Text style={styles.code}>{pack.verification?.algorithmVersion} · {pack.verification?.cardCount} cards</Text></View>
       </>}
     </>}
