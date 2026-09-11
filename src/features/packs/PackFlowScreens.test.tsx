@@ -55,6 +55,14 @@ describe('demo pack flow screens', () => {
     fireEvent.press(screen.getByRole('button', { name: 'Rip pack' }));
     expect(onRip).toHaveBeenCalledTimes(1);
   });
+
+  it('puts a newly prepared sealed pack ahead of an older opened pack', () => {
+    const opened = openDemoPack(createDemoPack('pitch-black'));
+    const sealed = createDemoPack('time-of-battle', 'demo-time-of-battle-fresh');
+    render(<MyPacksScreen packs={[opened, sealed]} onOpen={jest.fn()} />);
+
+    expect(screen.getAllByText(/SEALED DEMO PACK|OPENED · 10 CARDS/)[0].props.children).toBe('SEALED DEMO PACK');
+  });
   it('offers Binder and shop destinations after a reveal', () => {
     const onViewBinder = jest.fn();
     const onBrowsePacks = jest.fn();

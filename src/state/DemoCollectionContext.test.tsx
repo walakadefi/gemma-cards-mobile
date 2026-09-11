@@ -17,6 +17,16 @@ function CollectionHarness() {
 }
 
 describe('DemoCollectionProvider persistence', () => {
+  it('creates a fresh sealed pack when the same expansion is added again', async () => {
+    render(<DemoCollectionProvider><CollectionHarness /></DemoCollectionProvider>);
+    await waitFor(() => expect(screen.getByText('Loaded')).toBeTruthy());
+
+    fireEvent.press(screen.getByRole('button', { name: 'Add pack' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Add pack' }));
+
+    expect(screen.getByText('2 packs')).toBeTruthy();
+  });
+
   it('finishes earlier saves before persisting a reset', async () => {
     const pending: (() => void)[] = [];
     let disk = '';
@@ -70,7 +80,7 @@ describe('DemoCollectionProvider persistence', () => {
     await waitFor(() => expect(storage.setItem).toHaveBeenCalledTimes(1));
     const persisted = JSON.parse(storage.setItem.mock.calls[0][1]);
     expect(persisted.packs.map((pack: { id: string }) => pack.id)).toEqual([
-      'demo-pitch-black',
+      expect.stringMatching(/^demo-pitch-black-/),
       'demo-ascended-heroes',
     ]);
   });

@@ -24,6 +24,7 @@ export function DemoCollectionProvider({ children, storage }: { children: ReactN
   const [hydrated, setHydrated] = useState(false);
   const resetDuringHydration = useRef(false);
   const saveQueue = useRef(Promise.resolve());
+  const packSequence = useRef(0);
 
   useEffect(() => {
     let active = true;
@@ -45,8 +46,9 @@ export function DemoCollectionProvider({ children, storage }: { children: ReactN
     packs,
     cards: packs.flatMap((pack) => pack.revealedCards ?? []),
     addPack: (expansionId) => {
-      const pack = createDemoPack(expansionId);
-      setPacks((current) => current.some((item) => item.id === pack.id) ? current : [...current, pack]);
+      packSequence.current += 1;
+      const pack = createDemoPack(expansionId, `demo-${expansionId}-${Date.now().toString(36)}-${packSequence.current}`);
+      setPacks((current) => [...current, pack]);
       return pack.id;
     },
     openPack: (packId) => {

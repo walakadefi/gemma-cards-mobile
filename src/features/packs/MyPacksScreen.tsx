@@ -11,7 +11,7 @@ export function MyPacksScreen({ packs, onOpen }: { packs: DemoPack[]; onOpen: (i
   return <AppScreen scroll><AppHeader balance={1000} />
     <View style={styles.content}>
       <Text style={styles.eyebrow}>MY PACKS</Text><Text accessibilityRole="header" style={styles.title}>Your sealed pulls</Text>
-      {packs.length === 0 ? <EmptyState eyebrow="DEMO MODE" title="Nothing sealed yet" body="Choose a pack in Shop to prepare a local demo reveal." /> : packs.map((pack) => {
+      {packs.length === 0 ? <EmptyState eyebrow="DEMO MODE" title="Nothing sealed yet" body="Choose a pack in Shop to prepare a local demo reveal." /> : [...packs].reverse().map((pack) => {
         const expansion = expansions.find((item) => item.id === pack.expansionId);
         const name = expansion?.name ?? pack.expansionId;
         return <View key={pack.id} style={styles.card}>
