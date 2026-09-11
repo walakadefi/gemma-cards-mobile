@@ -12,6 +12,7 @@ describe('createProfileSummary', () => {
       openedPackCount: 1,
       cardCount: 10,
       collectionValueCents: 38674,
+      bestPullName: 'Mega Darkrai ex',
     });
   });
 
