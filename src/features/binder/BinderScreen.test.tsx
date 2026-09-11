@@ -47,6 +47,13 @@ it('previews selected buyback coins across filters without changing the collecti
   expect(cards).toHaveLength(3);
 });
 
+it('adds a card to buyback from its detail sheet', () => {
+  render(<BinderScreen cards={cards} />);
+  fireEvent.press(screen.getByRole('button', { name: 'View details for Darkrai' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Sell Darkrai' }));
+  expect(screen.getByLabelText('Estimated buyback 25,900 coins')).toBeTruthy();
+});
+
 it('excludes removed cards from the buyback preview', () => {
   const { rerender } = render(<BinderScreen cards={cards} />);
   fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Nami' }));
