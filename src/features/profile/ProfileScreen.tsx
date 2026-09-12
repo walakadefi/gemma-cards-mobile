@@ -68,6 +68,13 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
         </View>
         {summary.bestPullName ? <View style={styles.bestPull}><Text style={styles.cardLabel}>BEST PULL</Text><Text style={styles.bestPullName}>{summary.bestPullName}</Text></View> : null}
 
+        <View style={styles.goalCard}>
+          <View style={styles.goalHeader}><Text style={styles.cardLabel}>COLLECTION GOAL</Text><Text style={styles.goalCount}>{summary.collectionGoal.current} / {summary.collectionGoal.target}</Text></View>
+          <Text style={styles.goalTitle}>{summary.collectionGoal.title}</Text>
+          <View accessibilityLabel={`Collection goal progress ${summary.collectionGoal.current} of ${summary.collectionGoal.target}`} style={styles.goalTrack}><View style={[styles.goalFill, { width: `${Math.min(100, (summary.collectionGoal.current / summary.collectionGoal.target) * 100)}%` }]} /></View>
+          <Text style={styles.goalHint}>{Math.max(0, summary.collectionGoal.target - summary.collectionGoal.current)} more cards to go</Text>
+        </View>
+
         <Text style={styles.sectionTitle}>Account information</Text>
         <View style={styles.detailsCard}>
           <Detail label="Status" value="Guest demo" />
@@ -131,6 +138,7 @@ const styles = StyleSheet.create({
   statValueAccent: { color: colors.emerald },
   statLabel: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption },
   bestPull: { padding: spacing.md, borderRadius: radii.md, backgroundColor: '#2A2037', borderWidth: 1, borderColor: '#F5C451' }, bestPullName: { marginTop: spacing.xs, color: '#F5C451', fontSize: 20, fontWeight: '900' },
+  goalCard: { padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: '#3C2A68' }, goalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, goalCount: { color: colors.violet, fontWeight: '900' }, goalTitle: { color: colors.text, fontSize: 18, fontWeight: '900', marginTop: spacing.sm }, goalTrack: { height: 8, overflow: 'hidden', marginTop: spacing.md, borderRadius: radii.pill, backgroundColor: colors.surfaceRaised }, goalFill: { height: '100%', borderRadius: radii.pill, backgroundColor: colors.violet }, goalHint: { color: colors.textMuted, fontSize: fontSizes.caption, marginTop: spacing.sm },
   detailsCard: { paddingHorizontal: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   detail: { minHeight: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.border },
   detailLast: { borderBottomWidth: 0 },

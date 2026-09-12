@@ -26,6 +26,8 @@ describe('ProfileScreen', () => {
     expect(screen.getByText('10 cards')).toBeTruthy();
     expect(screen.getByText('€386.74')).toBeTruthy();
     expect(screen.getByText('Mega Darkrai ex')).toBeTruthy();
+    expect(screen.getByText('Build a 25-card Binder')).toBeTruthy();
+    expect(screen.getByLabelText('Collection goal progress 10 of 25')).toBeTruthy();
     expect(screen.getByText(/stored locally on this device/i)).toBeTruthy();
   });
 

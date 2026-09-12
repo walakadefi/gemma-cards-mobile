@@ -13,6 +13,7 @@ describe('createProfileSummary', () => {
       cardCount: 10,
       collectionValueCents: 38674,
       bestPullName: 'Mega Darkrai ex',
+      collectionGoal: { title: 'Build a 25-card Binder', current: 10, target: 25 },
     });
   });
 
@@ -23,6 +24,14 @@ describe('createProfileSummary', () => {
       openedPackCount: 0,
       cardCount: 0,
       collectionValueCents: 0,
+      collectionGoal: { title: 'Build a 10-card Binder', current: 0, target: 10 },
     });
+  });
+
+  it('sets the next collection goal from the number of cards collected', () => {
+    const openedPack = openDemoPack(createDemoPack('pitch-black'));
+    const summary = createProfileSummary([openedPack], openedPack.revealedCards ?? [], 1000);
+
+    expect(summary.collectionGoal).toEqual({ title: 'Build a 25-card Binder', current: 10, target: 25 });
   });
 });
