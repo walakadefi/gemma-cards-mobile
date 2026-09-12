@@ -6,6 +6,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { DemoPack } from '../../domain/demoCollection';
 import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
+import { expansionPresentation } from './expansionPresentation';
 
 export function MyPacksScreen({ packs, onOpen }: { packs: DemoPack[]; onOpen: (id: string) => void }) {
   const sealedPacks = packs.filter((pack) => pack.status === 'sealed').reverse();
@@ -14,13 +15,14 @@ export function MyPacksScreen({ packs, onOpen }: { packs: DemoPack[]; onOpen: (i
     const expansion = expansions.find((item) => item.id === pack.expansionId);
     const name = expansion?.name ?? pack.expansionId;
     const cards = pack.revealedCards ?? [];
+    const presentation = expansionPresentation(pack.expansionId);
     const bestPull = cards.reduce<typeof cards[number] | undefined>((best, card) => !best || card.marketValueCents > best.marketValueCents ? card : best, undefined);
-    return <View key={pack.id} style={styles.card}>
+    return <View key={pack.id} style={[styles.card, { borderColor: presentation.accent }]}>
       {expansion ? <Image accessibilityLabel={`${name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={{ height: 180, width: '100%', marginBottom: spacing.md }} /> : null}
-      <Text style={styles.status}>{pack.status === 'sealed' ? 'SEALED DEMO PACK' : 'OPENED · 10 CARDS'}</Text>
+      <Text style={[styles.status, { color: presentation.accent }]}>{pack.status === 'sealed' ? 'SEALED DEMO PACK' : 'OPENED · 10 CARDS'}</Text>
       <Text style={styles.name}>{name}</Text>
       {pack.status === 'revealed' ? <View style={styles.historyStats}><Text style={styles.bestPull}>Best pull · {bestPull?.name ?? '—'}</Text><Text style={styles.cardCount}>{cards.length} cards collected</Text></View> : <Text numberOfLines={1} style={styles.hash}>Commitment {pack.commitment}</Text>}
-      <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} demo pack`} onPress={() => onOpen(pack.id)} style={styles.action}><Text style={styles.actionText}>{pack.status === 'sealed' ? 'Choose & reveal' : 'View result'}</Text></Pressable>
+      <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} demo pack`} onPress={() => onOpen(pack.id)} style={[styles.action, { backgroundColor: presentation.accent }]}><Text style={styles.actionText}>{pack.status === 'sealed' ? 'Choose & reveal' : 'View result'}</Text></Pressable>
     </View>;
   };
   return <AppScreen scroll><AppHeader balance={1000} />

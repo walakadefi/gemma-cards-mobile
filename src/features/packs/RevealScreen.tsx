@@ -8,6 +8,7 @@ import { DemoCard, DemoPack } from '../../domain/demoCollection';
 import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { FINAL_CARD_SUSPENSE_MS, initialRipState, ripFlowReducer } from './ripFlow';
+import { expansionPresentation } from './expansionPresentation';
 
 const stars = [
   [7, 14, 1], [18, 33, 2], [82, 11, 1], [91, 27, 1], [4, 55, 1], [95, 62, 2], [12, 78, 1], [78, 81, 1],
@@ -33,6 +34,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   const cardEntranceAnimation = useRef<Animated.CompositeAnimation | null>(null);
   const hitAnimation = useRef<Animated.CompositeAnimation | null>(null);
   const expansion = expansions.find((item) => item.id === pack.expansionId);
+  const presentation = expansionPresentation(pack.expansionId);
 
   useEffect(() => {
     mounted.current = true;
@@ -141,14 +143,14 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
     <Pressable accessibilityRole="button" accessibilityLabel="Close reveal" onPress={onClose} style={styles.close}><Ionicons testID="reveal-close-icon" name="close" color={colors.text} size={25} /></Pressable>
     {state.phase === 'sealed' || state.phase === 'tearing' ? <>
       <View pointerEvents="none" style={styles.starField}>{stars.map(([left, top, size], index) => <View key={index} style={[styles.star, { left: `${left}%`, top: `${top}%`, width: size, height: size }]} />)}</View>
-      <Text style={styles.eyebrow}>SEALED · COMMITTED</Text><Text accessibilityRole="header" style={styles.title}>Rip the pack open</Text>
+      <Text style={[styles.eyebrow, { color: presentation.accent }]}>SEALED · COMMITTED</Text><Text accessibilityRole="header" style={styles.title}>Rip the pack open</Text>
       <View style={styles.packStage}>
-        {isOpening ? <Animated.View pointerEvents="none" style={[styles.foilGlow, { opacity: ripProgress.interpolate({ inputRange: [0, 0.3, 0.8, 1], outputRange: [0, 0.7, 0.45, 0] }), transform: [{ scale: ripProgress.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.35] }) }] }]} /> : null}
+        {isOpening ? <Animated.View pointerEvents="none" style={[styles.foilGlow, { backgroundColor: presentation.accent, shadowColor: presentation.accent, opacity: ripProgress.interpolate({ inputRange: [0, 0.3, 0.8, 1], outputRange: [0, 0.7, 0.45, 0] }), transform: [{ scale: ripProgress.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.35] }) }] }]} /> : null}
         {isOpening ? <Animated.View pointerEvents="none" style={[styles.emergingCard, { opacity: ripProgress.interpolate({ inputRange: [0, 0.45, 0.7, 1], outputRange: [0, 0, 1, 1] }), transform: [{ perspective: 900 }, { translateY: ripProgress.interpolate({ inputRange: [0, 0.45, 1], outputRange: [110, 110, -46] }) }, { scale: ripProgress.interpolate({ inputRange: [0, 0.45, 1], outputRange: [0.86, 0.86, 1] }) }, { rotateY: ripProgress.interpolate({ inputRange: [0, 0.68, 1], outputRange: ['0deg', '0deg', '360deg'] }) }] }]}><Text style={styles.emergingGem}>◆</Text></Animated.View> : null}
         {expansion ? <Animated.View style={{ opacity: isOpening ? ripProgress.interpolate({ inputRange: [0, 0.48, 0.82, 1], outputRange: [1, 1, 0.28, 0] }) : 1, transform: [{ translateX: isOpening ? ripShakeX : 0 }, { translateY: isOpening ? ripProgress.interpolate({ inputRange: [0, 1], outputRange: [0, 42] }) : 0 }] }}><Image accessibilityLabel={`${expansion.name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={styles.packImage} /></Animated.View> : null}
         {state.phase === 'sealed' ? <View accessibilityLabel="Slide along the pack top edge to tear it open" {...tearResponder.panHandlers} style={styles.tearZone}><View style={styles.tearSeam} /><View style={styles.tearNotch} /><Animated.View style={[styles.tearTrail, { transform: [{ scaleX: tearX.interpolate({ inputRange: [-190, 0], outputRange: [1, 0] }) }] }]} /><Animated.View style={[styles.tearHandle, { transform: [{ translateX: tearX }] }]}><Text style={styles.tearText}>←</Text></Animated.View></View> : null}
       </View>
-      {state.phase === 'sealed' ? <><Text style={styles.ripInstruction}>Slide along the top edge to tear it open</Text><Text style={styles.ripDirection}>Start at the tear notch, then drag left.</Text><Pressable accessibilityRole="button" accessibilityLabel="Rip it" onPress={rip} style={styles.ripAction}><Text style={styles.actionText}>Rip it</Text></Pressable><Text selectable style={styles.commitmentCode}>Commitment · {pack.commitment}</Text></> : null}
+      {state.phase === 'sealed' ? <><Text style={styles.ripInstruction}>Slide along the top edge to tear it open</Text><Text style={[styles.ripDirection, { color: presentation.accent }]}>Start at the tear notch, then drag left.</Text><Pressable accessibilityRole="button" accessibilityLabel="Rip it" onPress={rip} style={[styles.ripAction, { backgroundColor: presentation.accent }]}><Text style={styles.actionText}>Rip it</Text></Pressable><Text selectable style={styles.commitmentCode}>Commitment · {pack.commitment}</Text></> : null}
     </> : state.phase === 'suspense' ? <Animated.View style={[styles.suspense, { transform: [{ translateX: shakeX }, { scale: finalPulse }] }]}><Text style={styles.eyebrow}>FINAL CARD · HOLD YOUR BREATH</Text><Text accessibilityRole="header" style={styles.title}>Something is hiding…</Text><Text style={styles.finalHint}>The last card is fighting its way out.</Text><View style={styles.cardBack}><Text style={styles.gem}>◆</Text></View></Animated.View> : <>
       <Text style={styles.eyebrow}>CARD {(state.visibleIndex ?? 0) + 1} OF 10</Text><Text accessibilityRole="header" style={styles.title}>{state.phase === 'complete' ? 'The final pull' : 'Swipe for the next card'}</Text>
       <View style={styles.cardRevealStage}>

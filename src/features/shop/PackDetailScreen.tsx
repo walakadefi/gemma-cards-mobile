@@ -7,6 +7,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { formatCoins, formatEuro } from '../../domain/catalog';
 import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
+import { expansionPresentation } from '../packs/expansionPresentation';
 
 interface PackDetailScreenProps {
   expansionId: string;
@@ -17,6 +18,7 @@ interface PackDetailScreenProps {
 export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDetailScreenProps) {
   const [prepared, setPrepared] = useState(false);
   const expansion = expansions.find((item) => item.id === expansionId);
+  const presentation = expansionPresentation(expansionId);
 
   if (!expansion) {
     return (
@@ -34,11 +36,11 @@ export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDe
             <Ionicons testID="pack-details-close-icon" name="close" color={colors.text} size={25} />
           </Pressable>
         ) : null}
-        <Text style={styles.eyebrow}>{expansion.game === 'pokemon' ? 'POKÉMON' : 'ONE PIECE'} · {expansion.code}</Text>
+        <Text style={[styles.eyebrow, { color: presentation.accent }]}>{expansion.game === 'pokemon' ? 'POKÉMON' : 'ONE PIECE'} · {expansion.code}</Text>
         <Text accessibilityRole="header" style={styles.title}>{expansion.name}</Text>
         <Text style={styles.description}>{expansion.description}</Text>
 
-        <View style={[styles.packVisual, { borderColor: expansion.accent }]}>
+        <View style={[styles.packVisual, { borderColor: presentation.accent, backgroundColor: presentation.tint }]}> 
           <Image accessibilityLabel={`${expansion.name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={styles.packImage} />
         </View>
 
@@ -65,7 +67,7 @@ export function PackDetailScreen({ expansionId, onClose, onAddDemoPack }: PackDe
           <Text style={styles.fairnessBody}>For a real purchase, Gemma shows the outcome commitment before payment and discloses the seed after the reveal so the result can be verified.</Text>
         </View>
 
-        <Pressable accessibilityRole="button" accessibilityLabel="Add demo pack" accessibilityHint="Prepares a local demonstration and charges no coins" onPress={() => { setPrepared(true); onAddDemoPack?.(expansion.id); }} style={styles.action}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Add demo pack" accessibilityHint="Prepares a local demonstration and charges no coins" onPress={() => { setPrepared(true); onAddDemoPack?.(expansion.id); }} style={[styles.action, { backgroundColor: presentation.accent }]}>
           <Text style={styles.actionText}>Add demo pack</Text>
           <Text style={styles.actionMeta}>No charge · prototype only</Text>
         </Pressable>
