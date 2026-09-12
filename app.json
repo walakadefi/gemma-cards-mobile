@@ -2,6 +2,7 @@
   "expo": {
     "name": "GemmaCards",
     "slug": "gemma-cards-mobile",
+    "description": "Open digital trading-card packs, reveal every pull, and build your collection.",
     "version": "0.1.0",
     "runtimeVersion": {
       "policy": "appVersion"

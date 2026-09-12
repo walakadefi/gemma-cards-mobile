@@ -5,6 +5,10 @@ const appConfig = require('../../app.json').expo;
 const easConfig = require('../../eas.json');
 
 describe('native app configuration', () => {
+  it('describes the product in its native configuration', () => {
+    expect(appConfig.description).toBe('Open digital trading-card packs, reveal every pull, and build your collection.');
+  });
+
   it('defines stable iOS and Android application identities', () => {
     expect(appConfig.ios).toMatchObject({ bundleIdentifier: 'com.gemmacards.app', buildNumber: '1', supportsTablet: true });
     expect(appConfig.android).toMatchObject({ package: 'com.gemmacards.app', versionCode: 1, edgeToEdgeEnabled: true, permissions: [] });
