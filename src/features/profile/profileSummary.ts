@@ -8,6 +8,7 @@ export interface ProfileSummary {
   collectionValueCents: number;
   bestPullName?: string;
   collectionGoal: { title: string; current: number; target: number };
+  achievements: { id: string; title: string; unlocked: boolean }[];
 }
 
 export function createProfileSummary(packs: DemoPack[], cards: DemoCard[], balance: number): ProfileSummary {
@@ -21,5 +22,10 @@ export function createProfileSummary(packs: DemoPack[], cards: DemoCard[], balan
     collectionValueCents: cards.reduce((total, card) => total + card.marketValueCents, 0),
     bestPullName: cards.reduce<DemoCard | undefined>((best, card) => !best || card.marketValueCents > best.marketValueCents ? card : best, undefined)?.name,
     collectionGoal: { title: `Build a ${target}-card Binder`, current: cardCount, target },
+    achievements: [
+      { id: 'first-rip', title: 'First rip', unlocked: packs.some((pack) => pack.status === 'revealed') },
+      { id: 'binder-ten', title: 'Binder builder', unlocked: cardCount >= 10 },
+      { id: 'chase-pull', title: 'Chase pull', unlocked: cards.some((card) => card.rarity === 'Illustration Rare') },
+    ],
   };
 }

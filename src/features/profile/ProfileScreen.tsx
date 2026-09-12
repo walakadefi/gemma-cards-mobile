@@ -75,6 +75,9 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
           <Text style={styles.goalHint}>{Math.max(0, summary.collectionGoal.target - summary.collectionGoal.current)} more cards to go</Text>
         </View>
 
+        <Text style={styles.sectionTitle}>Achievements</Text>
+        <View style={styles.achievementList}>{summary.achievements.map((achievement) => <View key={achievement.id} accessibilityLabel={`${achievement.title} ${achievement.unlocked ? 'unlocked' : 'locked'}`} style={[styles.achievement, achievement.unlocked && styles.achievementUnlocked]}><Ionicons name={achievement.unlocked ? 'trophy' : 'lock-closed'} color={achievement.unlocked ? '#F5C451' : colors.textMuted} size={18} /><View><Text style={styles.achievementTitle}>{achievement.title}</Text><Text style={styles.achievementStatus}>{achievement.unlocked ? 'Unlocked' : 'Keep collecting'}</Text></View></View>)}</View>
+
         <Text style={styles.sectionTitle}>Account information</Text>
         <View style={styles.detailsCard}>
           <Detail label="Status" value="Guest demo" />
@@ -139,6 +142,7 @@ const styles = StyleSheet.create({
   statLabel: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption },
   bestPull: { padding: spacing.md, borderRadius: radii.md, backgroundColor: '#2A2037', borderWidth: 1, borderColor: '#F5C451' }, bestPullName: { marginTop: spacing.xs, color: '#F5C451', fontSize: 20, fontWeight: '900' },
   goalCard: { padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: '#3C2A68' }, goalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, goalCount: { color: colors.violet, fontWeight: '900' }, goalTitle: { color: colors.text, fontSize: 18, fontWeight: '900', marginTop: spacing.sm }, goalTrack: { height: 8, overflow: 'hidden', marginTop: spacing.md, borderRadius: radii.pill, backgroundColor: colors.surfaceRaised }, goalFill: { height: '100%', borderRadius: radii.pill, backgroundColor: colors.violet }, goalHint: { color: colors.textMuted, fontSize: fontSizes.caption, marginTop: spacing.sm },
+  achievementList: { gap: spacing.sm }, achievement: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, opacity: .7 }, achievementUnlocked: { backgroundColor: '#29201A', borderColor: '#6B5726', opacity: 1 }, achievementTitle: { color: colors.text, fontWeight: '900' }, achievementStatus: { color: colors.textMuted, fontSize: fontSizes.caption, marginTop: 2 },
   detailsCard: { paddingHorizontal: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   detail: { minHeight: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.border },
   detailLast: { borderBottomWidth: 0 },

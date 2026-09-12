@@ -14,6 +14,7 @@ describe('createProfileSummary', () => {
       collectionValueCents: 38674,
       bestPullName: 'Mega Darkrai ex',
       collectionGoal: { title: 'Build a 25-card Binder', current: 10, target: 25 },
+      achievements: [{ id: 'first-rip', title: 'First rip', unlocked: true }, { id: 'binder-ten', title: 'Binder builder', unlocked: true }, { id: 'chase-pull', title: 'Chase pull', unlocked: true }],
     });
   });
 
@@ -25,6 +26,7 @@ describe('createProfileSummary', () => {
       cardCount: 0,
       collectionValueCents: 0,
       collectionGoal: { title: 'Build a 10-card Binder', current: 0, target: 10 },
+      achievements: [{ id: 'first-rip', title: 'First rip', unlocked: false }, { id: 'binder-ten', title: 'Binder builder', unlocked: false }, { id: 'chase-pull', title: 'Chase pull', unlocked: false }],
     });
   });
 
@@ -33,5 +35,16 @@ describe('createProfileSummary', () => {
     const summary = createProfileSummary([openedPack], openedPack.revealedCards ?? [], 1000);
 
     expect(summary.collectionGoal).toEqual({ title: 'Build a 25-card Binder', current: 10, target: 25 });
+  });
+
+  it('unlocks collection achievements from opened packs and rare pulls', () => {
+    const openedPack = openDemoPack(createDemoPack('pitch-black'));
+    const summary = createProfileSummary([openedPack], openedPack.revealedCards ?? [], 1000);
+
+    expect(summary.achievements).toEqual([
+      { id: 'first-rip', title: 'First rip', unlocked: true },
+      { id: 'binder-ten', title: 'Binder builder', unlocked: true },
+      { id: 'chase-pull', title: 'Chase pull', unlocked: true },
+    ]);
   });
 });

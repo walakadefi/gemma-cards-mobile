@@ -28,6 +28,8 @@ describe('ProfileScreen', () => {
     expect(screen.getByText('Mega Darkrai ex')).toBeTruthy();
     expect(screen.getByText('Build a 25-card Binder')).toBeTruthy();
     expect(screen.getByLabelText('Collection goal progress 10 of 25')).toBeTruthy();
+    expect(screen.getByLabelText('First rip unlocked')).toBeTruthy();
+    expect(screen.getByLabelText('Chase pull unlocked')).toBeTruthy();
     expect(screen.getByText(/stored locally on this device/i)).toBeTruthy();
   });
 
