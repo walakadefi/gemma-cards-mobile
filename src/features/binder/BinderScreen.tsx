@@ -193,6 +193,7 @@ export function BinderScreen({
         renderItem={({ item: card }) => (
           <View
             testID="binder-card"
+            accessibilityLabel={`Collection sleeve for ${card.name}`}
             style={[
               styles.card,
               discovery.card,
@@ -206,6 +207,7 @@ export function BinderScreen({
               },
             ]}
           >
+            <View style={discovery.sleeveTop}><Text style={discovery.sleeveLabel}>COLLECTOR SLEEVE</Text><Text style={discovery.sleeveIndex}>#{card.id.slice(-3).toUpperCase()}</Text></View>
             <Text
               style={[
                 styles.rarity,
@@ -351,6 +353,7 @@ export function BinderScreen({
 const discovery = StyleSheet.create({
   row: { gap: spacing.md },
   card: { flex: 1, minWidth: 0 },
+  sleeveTop: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }, sleeveLabel: { color: colors.textMuted, fontSize: 9, fontWeight: '900', letterSpacing: .8 }, sleeveIndex: { color: colors.textMuted, fontSize: 9, fontWeight: '900' },
   select: {
     minHeight: 48,
     marginTop: spacing.md,
@@ -451,7 +454,7 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.violet, fontWeight: "900" },
   title: { color: colors.text, fontSize: fontSizes.title, fontWeight: "900" },
   card: {
-    padding: spacing.lg,
+    padding: spacing.md,
     borderRadius: radii.lg,
     backgroundColor: colors.surface,
     borderWidth: 1,

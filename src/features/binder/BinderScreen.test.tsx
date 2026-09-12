@@ -33,6 +33,13 @@ it('sorts by value without mutating saved collection order', () => {
   expect(screen.getAllByTestId('binder-card')[0].findAllByProps({ children: 'Murkrow' }).length).toBeGreaterThan(0);
 });
 
+it('renders binder cards as accessible collection sleeves', () => {
+  render(<BinderScreen cards={cards} />);
+
+  expect(screen.getByLabelText('Collection sleeve for Darkrai')).toBeTruthy();
+  expect(screen.getAllByTestId('binder-card')).toHaveLength(3);
+});
+
 it('previews selected buyback coins across filters without changing the collection', () => {
   render(<BinderScreen cards={cards} />);
   fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Murkrow' }));
