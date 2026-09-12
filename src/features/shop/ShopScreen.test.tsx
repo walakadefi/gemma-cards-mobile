@@ -2,6 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { ShopScreen } from './ShopScreen';
 
+const recentCards = [{ id: 'recent-1', name: 'Mega Darkrai ex', setName: 'Pitch Black', rarity: 'Illustration Rare' as const, marketValueCents: 34534 }];
+
 describe('ShopScreen', () => {
   it('starts the featured first rip directly from the welcome panel', () => {
     const onOpenPack = jest.fn();
@@ -10,16 +12,25 @@ describe('ShopScreen', () => {
     expect(onOpenPack).toHaveBeenCalledWith('pitch-black');
   });
 
+  it('puts the featured drop and latest pull ahead of the catalog', () => {
+    render(<ShopScreen onOpenPack={() => undefined} recentCards={recentCards} />);
+
+    expect(screen.getByText('FEATURED DROP')).toBeTruthy();
+    expect(screen.getAllByText('Pitch Black').length).toBeGreaterThan(0);
+    expect(screen.getByText('RECENTLY PULLED')).toBeTruthy();
+    expect(screen.getByText('Mega Darkrai ex')).toBeTruthy();
+  });
+
   it('filters the visible expansion cards by game', () => {
     render(<ShopScreen onOpenPack={() => undefined} />);
 
     expect(screen.getByText('40 sets')).toBeTruthy();
-    expect(screen.getByText('Pitch Black')).toBeTruthy();
+    expect(screen.getAllByText('Pitch Black').length).toBeGreaterThan(0);
 
     fireEvent.press(screen.getByRole('button', { name: 'Show One Piece packs' }));
 
     expect(screen.getByText('19 sets')).toBeTruthy();
-    expect(screen.queryByText('Pitch Black')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Open Pitch Black details' })).toBeNull();
     expect(screen.getByText('The Time of Battle')).toBeTruthy();
     expect(screen.getByText('One Piece Heroines')).toBeTruthy();
   });
@@ -31,7 +42,7 @@ describe('ShopScreen', () => {
 
     expect(screen.getByText('1 set')).toBeTruthy();
     expect(screen.getByText('Romance Dawn')).toBeTruthy();
-    expect(screen.queryByText('Pitch Black')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Open Pitch Black details' })).toBeNull();
 
     fireEvent.changeText(screen.getByLabelText('Search packs'), 'not a real pack');
 

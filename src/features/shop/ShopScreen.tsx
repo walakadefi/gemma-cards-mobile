@@ -6,11 +6,13 @@ import { AppScreen } from '../../components/AppScreen';
 import { FilterChip } from '../../components/FilterChip';
 import { PackCard } from '../../components/PackCard';
 import { browseExpansions, Expansion, ExpansionSort, GameFilter } from '../../domain/catalog';
+import { DemoCard } from '../../domain/demoCollection';
 import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 
 interface ShopScreenProps {
   onOpenPack?: (id: string) => void;
+  recentCards?: DemoCard[];
 }
 
 const filters: { label: string; value: GameFilter; accessibilityLabel: string }[] = [
@@ -33,7 +35,7 @@ const groupIntoRows = (items: Expansion[], columns: number): Expansion[][] => {
   return rows;
 };
 
-export function ShopScreen({ onOpenPack = () => undefined }: ShopScreenProps) {
+export function ShopScreen({ onOpenPack = () => undefined, recentCards = [] }: ShopScreenProps) {
   const [filter, setFilter] = useState<GameFilter>('all');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<ExpansionSort>('newest');
@@ -49,6 +51,7 @@ export function ShopScreen({ onOpenPack = () => undefined }: ShopScreenProps) {
       <ScrollView contentContainerStyle={styles.content} stickyHeaderIndices={[1]} keyboardShouldPersistTaps="handled">
         <View style={styles.featured}>
           <Text style={styles.demo}>DEMO CATALOG</Text>
+          <View style={styles.featuredDrop}><Text style={styles.featuredDropLabel}>FEATURED DROP</Text><Text style={styles.featuredPackName}>{expansions[0].name}</Text></View>
           <Text style={styles.eyebrow}>POKÉMON & ONE PIECE</Text>
           <Text style={styles.hero}>Rip real packs,{`\n`}online.</Text>
           <Text style={styles.subhead}>Every card is yours—ship it home or trade it back for coins.</Text>
@@ -58,6 +61,8 @@ export function ShopScreen({ onOpenPack = () => undefined }: ShopScreenProps) {
           </View>
           <Pressable accessibilityRole="button" accessibilityLabel="Start your first rip" onPress={() => onOpenPack(expansions[0].id)} style={styles.firstRip}><Text style={styles.firstRipText}>Start your first rip</Text></Pressable>
         </View>
+
+        {recentCards.length ? <View style={styles.recent}><View style={styles.recentHeading}><Text style={styles.sectionEyebrow}>RECENTLY PULLED</Text><Text style={styles.recentCount}>{recentCards.length} latest</Text></View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recentRow}>{recentCards.slice(0, 5).map((card) => <View key={card.id} accessibilityLabel={`Recent pull ${card.name}`} style={styles.recentCard}><Text numberOfLines={1} style={styles.recentName}>{card.name}</Text><Text numberOfLines={1} style={styles.recentSet}>{card.setName}</Text><Text style={styles.recentRarity}>{card.rarity}</Text></View>)}</ScrollView></View> : null}
 
         <View accessibilityLabel="Pack browsing controls" style={styles.controls}>
           <View style={styles.sectionHeading}>
@@ -142,6 +147,7 @@ export function ShopScreen({ onOpenPack = () => undefined }: ShopScreenProps) {
 const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xxl },
   featured: { margin: spacing.md, marginBottom: spacing.xl, padding: spacing.lg, overflow: 'hidden', backgroundColor: colors.surfaceRaised, borderRadius: 24, borderWidth: 1, borderColor: '#3C2A68' },
+  featuredDrop: { marginTop: spacing.md, padding: spacing.md, borderRadius: radii.md, backgroundColor: '#211A35', borderWidth: 1, borderColor: colors.violet }, featuredDropLabel: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 }, featuredPackName: { color: colors.text, fontSize: 18, fontWeight: '900', marginTop: 3 },
   demo: { alignSelf: 'flex-start', paddingHorizontal: 9, paddingVertical: 5, overflow: 'hidden', color: colors.text, backgroundColor: colors.violetStrong, borderRadius: radii.pill, fontSize: 9, fontWeight: '900', letterSpacing: 1 },
   eyebrow: { marginTop: spacing.lg, color: colors.emerald, fontSize: fontSizes.caption, fontWeight: '900', letterSpacing: 1.2 },
   hero: { marginTop: spacing.sm, color: colors.text, fontSize: fontSizes.hero, lineHeight: 38, fontWeight: '900', letterSpacing: -1.2 },
@@ -149,6 +155,7 @@ const styles = StyleSheet.create({
   trustRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginTop: spacing.lg },
   trust: { color: colors.text, fontSize: fontSizes.caption, fontWeight: '700' },
   firstRip: { alignSelf: 'flex-start', minHeight: 46, marginTop: spacing.lg, paddingHorizontal: spacing.lg, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.violet }, firstRipText: { color: colors.text, fontWeight: '900' },
+  recent: { paddingHorizontal: spacing.md, marginBottom: spacing.md }, recentHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm }, recentCount: { color: colors.textMuted, fontSize: fontSizes.caption }, recentRow: { gap: spacing.sm, paddingRight: spacing.md }, recentCard: { width: 146, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surfaceRaised, borderWidth: 1, borderColor: colors.border }, recentName: { color: colors.text, fontWeight: '900' }, recentSet: { color: colors.textMuted, fontSize: 11, marginTop: 4 }, recentRarity: { color: '#F5C451', fontSize: 10, fontWeight: '900', marginTop: spacing.sm },
   controls: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.md, backgroundColor: colors.background, borderBottomWidth: 1, borderBottomColor: colors.border, zIndex: 2 },
   sectionHeading: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   sectionEyebrow: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
