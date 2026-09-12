@@ -55,6 +55,13 @@ it('guides an empty binder back to browse packs', () => {
   expect(onBrowsePacks).toHaveBeenCalledTimes(1);
 });
 
+it('waits for saved cards instead of showing an empty Binder during restore', () => {
+  render(<BinderScreen cards={[]} hydrated={false} />);
+
+  expect(screen.getByText('Restoring your Binder')).toBeTruthy();
+  expect(screen.queryByText('Your pulls will live here')).toBeNull();
+});
+
 it('previews selected buyback coins across filters without changing the collection', () => {
   render(<BinderScreen cards={cards} />);
   fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Murkrow' }));

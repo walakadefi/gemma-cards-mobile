@@ -20,11 +20,13 @@ import { rarityPresentation } from './rarityPresentation';
 
 export function BinderScreen({
   cards,
+  hydrated = true,
   onShip,
   onTrade,
   onBrowsePacks,
 }: {
   cards: DemoCard[];
+  hydrated?: boolean;
   onShip?: () => void;
   onTrade?: () => void;
   onBrowsePacks?: () => void;
@@ -62,6 +64,14 @@ export function BinderScreen({
       ? result.sort((a, b) => b.marketValueCents - a.marketValueCents)
       : result;
   }, [cards, query, rarity, highestFirst]);
+  if (!hydrated) {
+    return (
+      <AppScreen>
+        <AppHeader balance={1000} />
+        <EmptyState eyebrow="SAVED COLLECTION" title="Restoring your Binder" body="Loading your saved pulls and collection value." />
+      </AppScreen>
+    );
+  }
   return (
     <AppScreen>
       <AppHeader balance={1000} />
