@@ -4,6 +4,6 @@ import { useDemoCollection } from '../../src/state/DemoCollectionContext';
 
 export default function PacksScreen() {
   const router = useRouter();
-  const { packs } = useDemoCollection();
-  return <MyPacksScreen packs={packs} onOpen={(id) => router.push(`/reveal/${id}`)} onBrowsePacks={() => router.push('/')} />;
+  const { packs, hydrated } = useDemoCollection();
+  return <MyPacksScreen hydrated={hydrated} packs={packs} onOpen={(id) => router.push(`/reveal/${id}`)} onBrowsePacks={() => router.push('/')} />;
 }

@@ -69,6 +69,13 @@ describe('demo pack flow screens', () => {
     expect(onBrowsePacks).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps My Packs in a restoring state until saved packs are available', () => {
+    render(<MyPacksScreen hydrated={false} packs={[]} onOpen={jest.fn()} />);
+
+    expect(screen.getByText('Restoring your collection')).toBeTruthy();
+    expect(screen.queryByText('Nothing sealed yet')).toBeNull();
+  });
+
   it('puts a newly prepared sealed pack ahead of an older opened pack', () => {
     const opened = openDemoPack(createDemoPack('pitch-black'));
     const sealed = createDemoPack('time-of-battle', 'demo-time-of-battle-fresh');
