@@ -33,3 +33,10 @@ it('guides an empty Vault back to browse packs', () => {
   fireEvent.press(screen.getByRole('button', { name: 'Browse packs' }));
   expect(onBrowsePacks).toHaveBeenCalledTimes(1);
 });
+
+it('waits for saved cards instead of showing an empty Vault during restore', () => {
+  render(<VaultScreen cards={[]} hydrated={false} />);
+
+  expect(screen.getByText('Restoring your Vault')).toBeTruthy();
+  expect(screen.queryByText('Your cards start in the Binder')).toBeNull();
+});

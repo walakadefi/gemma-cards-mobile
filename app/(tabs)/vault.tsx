@@ -4,6 +4,6 @@ import { useDemoCollection } from '../../src/state/DemoCollectionContext';
 
 export default function VaultScreen() {
   const router = useRouter();
-  const { cards } = useDemoCollection();
-  return <CollectionVault cards={cards} onBrowsePacks={() => router.push('/')} />;
+  const { cards, hydrated } = useDemoCollection();
+  return <CollectionVault hydrated={hydrated} cards={cards} onBrowsePacks={() => router.push('/')} />;
 }

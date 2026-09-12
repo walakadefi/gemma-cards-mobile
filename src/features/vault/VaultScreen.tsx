@@ -8,10 +8,13 @@ import { formatEuro } from '../../domain/catalog';
 import { colors, radii, spacing } from '../../theme/tokens';
 import { shippingQuote } from './shippingQuote';
 
-export function VaultScreen({ cards, onBrowsePacks }: { cards: DemoCard[]; onBrowsePacks?: () => void }) {
+export function VaultScreen({ cards, hydrated = true, onBrowsePacks }: { cards: DemoCard[]; hydrated?: boolean; onBrowsePacks?: () => void }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [reviewing, setReviewing] = useState(false);
   const [message, setMessage] = useState('');
+  if (!hydrated) {
+    return <AppScreen><AppHeader balance={1000} /><EmptyState eyebrow="SAVED COLLECTION" title="Restoring your Vault" body="Loading your saved cards for shipping." /></AppScreen>;
+  }
   const chosen = cards.filter((card) => selected.includes(card.id));
   const quote = shippingQuote(chosen);
   return <AppScreen><AppHeader balance={1000} />
