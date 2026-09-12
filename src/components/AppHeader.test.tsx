@@ -3,6 +3,15 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { AppHeader } from './AppHeader';
 
 describe('AppHeader', () => {
+  it('opens rewards from the balance button', () => {
+    const onBalancePress = jest.fn();
+
+    render(<AppHeader balance={1000} onBalancePress={onBalancePress} />);
+    fireEvent.press(screen.getByRole('button', { name: '1,000 Gemma coins' }));
+
+    expect(onBalancePress).toHaveBeenCalledTimes(1);
+  });
+
   it('opens the profile from its accessible button', () => {
     const onProfilePress = jest.fn();
 

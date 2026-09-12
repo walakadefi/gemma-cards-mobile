@@ -7,10 +7,15 @@ import { colors, fontSizes, radii, spacing } from '../theme/tokens';
 
 interface AppHeaderProps {
   balance: number;
+  onBalancePress?: () => void;
   onProfilePress?: () => void;
 }
 
-export function AppHeader({ balance, onProfilePress = () => router.push('/profile') }: AppHeaderProps) {
+export function AppHeader({
+  balance,
+  onBalancePress = () => router.push('/rewards'),
+  onProfilePress = () => router.push('/profile'),
+}: AppHeaderProps) {
   return (
     <View style={styles.header}>
       <View style={styles.brand} accessibilityLabel="GemmaCards">
@@ -20,7 +25,13 @@ export function AppHeader({ balance, onProfilePress = () => router.push('/profil
         </Text>
       </View>
       <View style={styles.actions}>
-        <Pressable accessibilityRole="button" accessibilityLabel={`${formatCoins(balance)} Gemma coins`} style={styles.balance}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${formatCoins(balance)} Gemma coins`}
+          accessibilityHint="Opens rewards and coin information"
+          onPress={onBalancePress}
+          style={styles.balance}
+        >
           <Ionicons testID="header-coin-icon" name="diamond" color={colors.violet} size={15} />
           <Text style={styles.balanceText}>{formatCoins(balance)}</Text>
         </Pressable>
