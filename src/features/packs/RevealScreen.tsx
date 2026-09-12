@@ -9,6 +9,7 @@ import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { FINAL_CARD_SUSPENSE_MS, initialRipState, ripFlowReducer } from './ripFlow';
 import { expansionPresentation } from './expansionPresentation';
+import { rarityPresentation } from '../binder/rarityPresentation';
 
 const stars = [
   [7, 14, 1], [18, 33, 2], [82, 11, 1], [91, 27, 1], [4, 55, 1], [95, 62, 2], [12, 78, 1], [78, 81, 1],
@@ -126,6 +127,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
   const newCardCount = (pack.revealedCards?.slice(0, visibleCardCount).filter((item) => !knownCardNames.has(item.name)).length) ?? visibleCardCount;
   const isChasePull = card?.rarity === 'Illustration Rare';
   const isRarePull = card?.rarity === 'Rare' || isChasePull;
+  const currentRarity = rarityPresentation(card?.rarity ?? 'Common');
   const packTotal = (pack.revealedCards ?? []).reduce((sum, item) => sum + item.marketValueCents, 0);
   const bestPull = (pack.revealedCards ?? []).reduce<DemoCard | undefined>((best, item) => !best || item.marketValueCents > best.marketValueCents ? item : best, undefined);
   useEffect(() => {
@@ -156,7 +158,7 @@ export function RevealScreen({ pack, onRip, onClose, onViewBinder, onBrowsePacks
       <View style={styles.cardRevealStage}>
         {state.phase === 'browsing' ? <View pointerEvents="none" style={styles.cardStack}><View style={[styles.stackCard, styles.stackCardBack]} /><View style={[styles.stackCard, styles.stackCardFront]} /></View> : null}
         {isRarePull ? <Animated.View pointerEvents="none" style={[styles.hitHalo, { opacity: hitPulse.interpolate({ inputRange: [1, 1.035], outputRange: [0.25, 0.7] }), transform: [{ scale: hitPulse.interpolate({ inputRange: [1, 1.035], outputRange: [0.95, 1.12] }) }] }]} /> : null}
-        <Animated.View accessibilityLabel={state.phase === 'browsing' ? 'Swipe left to throw this card forward' : undefined} {...cardResponder.panHandlers} style={[styles.card, isRarePull && styles.rareCard, { transform: [{ translateX: swipeX }, { translateY: state.phase === 'browsing' ? cardLiftY : 0 }, { rotate: state.phase === 'browsing' ? swipeX.interpolate({ inputRange: [-420, 0], outputRange: ['-13deg', '0deg'] }) : '0deg' }, { scale: isRarePull ? hitPulse : swipeX.interpolate({ inputRange: [-420, 0], outputRange: [0.96, 1] }) }] }]}>{isRarePull ? <Text style={[styles.hitBadge, isChasePull && styles.chaseBadge]}>{isChasePull ? 'CHASE PULL' : 'RARE PULL'}</Text> : null}<Text style={[styles.rarity, isRarePull && styles.rareRarity]}>{card?.rarity}</Text><Text style={styles.cardName}>{card?.name ?? 'Preparing card…'}</Text><Text style={styles.set}>{card?.setName}</Text><Text style={[styles.value, isRarePull && styles.rareValue]}>{card ? formatEuro(card.marketValueCents) : ''}</Text></Animated.View>
+        <Animated.View accessibilityLabel={state.phase === 'browsing' ? 'Swipe left to throw this card forward' : undefined} {...cardResponder.panHandlers} style={[styles.card, isRarePull && styles.rareCard, { borderColor: currentRarity.borderColor, backgroundColor: currentRarity.badgeBackground, transform: [{ translateX: swipeX }, { translateY: state.phase === 'browsing' ? cardLiftY : 0 }, { rotate: state.phase === 'browsing' ? swipeX.interpolate({ inputRange: [-420, 0], outputRange: ['-13deg', '0deg'] }) : '0deg' }, { scale: isRarePull ? hitPulse : swipeX.interpolate({ inputRange: [-420, 0], outputRange: [0.96, 1] }) }] }]}>{isRarePull ? <Text style={[styles.hitBadge, isChasePull && styles.chaseBadge]}>{isChasePull ? 'CHASE PULL' : 'RARE PULL'}</Text> : null}<Text style={[styles.rarity, { color: currentRarity.textColor }]}>{card?.rarity}</Text><Text style={styles.cardName}>{card?.name ?? 'Preparing card…'}</Text><Text style={styles.set}>{card?.setName}</Text><Text style={[styles.value, { color: currentRarity.textColor }]}>{card ? formatEuro(card.marketValueCents) : ''}</Text></Animated.View>
       </View>
       {state.phase === 'browsing' ? <><Text style={styles.stackCount}>{9 - (state.visibleIndex ?? 0)} cards remain in the stack</Text><Text style={styles.binderProgress}>{newCardCount} of 10 new cards added to Binder</Text></> : null}
       {state.phase === 'browsing' ? <Pressable accessibilityRole="button" accessibilityLabel="Next card" onPress={next} style={styles.action}><Text style={styles.actionText}>{state.visibleIndex === 8 ? 'Reveal final card' : 'Next card'}</Text></Pressable> : <>

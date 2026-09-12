@@ -16,6 +16,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { formatCoins, formatEuro } from "../../domain/catalog";
 import { DemoCard } from "../../domain/demoCollection";
 import { colors, fontSizes, radii, spacing } from "../../theme/tokens";
+import { rarityPresentation } from './rarityPresentation';
 
 export function BinderScreen({
   cards,
@@ -198,21 +199,13 @@ export function BinderScreen({
               styles.card,
               discovery.card,
               {
-                borderColor:
-                  card.rarity === "Illustration Rare"
-                    ? "#F5C451"
-                    : card.rarity === "Rare"
-                      ? colors.violet
-                      : colors.border,
+                borderColor: rarityPresentation(card.rarity).borderColor,
               },
             ]}
           >
-            <View style={discovery.sleeveTop}><Text style={discovery.sleeveLabel}>COLLECTOR SLEEVE</Text><Text style={discovery.sleeveIndex}>#{card.id.slice(-3).toUpperCase()}</Text></View>
+            <View style={discovery.sleeveTop}><Text style={[discovery.rarityBadge, { color: rarityPresentation(card.rarity).textColor, backgroundColor: rarityPresentation(card.rarity).badgeBackground }]}>{rarityPresentation(card.rarity).label}</Text><Text style={discovery.sleeveIndex}>#{card.id.slice(-3).toUpperCase()}</Text></View>
             <Text
-              style={[
-                styles.rarity,
-                card.rarity === "Illustration Rare" && discovery.best,
-              ]}
+              style={[styles.rarity, { color: rarityPresentation(card.rarity).textColor }]}
             >
               {card.rarity}
             </Text>
@@ -353,7 +346,7 @@ export function BinderScreen({
 const discovery = StyleSheet.create({
   row: { gap: spacing.md },
   card: { flex: 1, minWidth: 0 },
-  sleeveTop: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }, sleeveLabel: { color: colors.textMuted, fontSize: 9, fontWeight: '900', letterSpacing: .8 }, sleeveIndex: { color: colors.textMuted, fontSize: 9, fontWeight: '900' },
+  sleeveTop: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }, rarityBadge: { alignSelf: 'flex-start', paddingHorizontal: 7, paddingVertical: 3, overflow: 'hidden', borderRadius: radii.pill, fontSize: 9, fontWeight: '900', letterSpacing: .8 }, sleeveIndex: { color: colors.textMuted, fontSize: 9, fontWeight: '900' },
   select: {
     minHeight: 48,
     marginTop: spacing.md,
