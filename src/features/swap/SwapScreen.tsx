@@ -7,7 +7,7 @@ import { DemoCard } from '../../domain/demoCollection';
 import { colors, radii, spacing } from '../../theme/tokens';
 import { createSwapOffers, createTradeReceipt } from './swapFlow';
 
-export function SwapScreen({ cards, onClose }: { cards: DemoCard[]; onClose: () => void }) {
+export function SwapScreen({ cards, hydrated = true, onClose }: { cards: DemoCard[]; hydrated?: boolean; onClose: () => void }) {
   const [selectedCardId, setSelectedCardId] = useState(cards[0]?.id);
   const [selectedOfferId, setSelectedOfferId] = useState<string>();
   const [confirmed, setConfirmed] = useState(false);
@@ -30,7 +30,9 @@ export function SwapScreen({ cards, onClose }: { cards: DemoCard[]; onClose: () 
           </Pressable>
         </View>
 
-        {cards.length === 0 ? (
+        {!hydrated ? (
+          <View style={styles.empty}><Text style={styles.emptyTitle}>Restoring your pulls</Text><Text style={styles.body}>Loading your saved cards for trading.</Text></View>
+        ) : cards.length === 0 ? (
           <View style={styles.empty}><Text style={styles.emptyTitle}>No pulls to trade yet</Text><Text style={styles.body}>Rip a pack first, then your cards will appear here.</Text></View>
         ) : confirmed && receipt ? (
           <View style={styles.receipt}>

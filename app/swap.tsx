@@ -5,7 +5,7 @@ import { useDemoCollection } from '../src/state/DemoCollectionContext';
 
 export default function SwapRoute() {
   const router = useRouter();
-  const { cards } = useDemoCollection();
+  const { cards, hydrated } = useDemoCollection();
 
-  return <SwapScreen cards={cards} onClose={() => router.back()} />;
+  return <SwapScreen cards={cards} hydrated={hydrated} onClose={() => router.back()} />;
 }
