@@ -31,6 +31,8 @@ export function BinderScreen({
   const [highestFirst, setHighestFirst] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [detailCard, setDetailCard] = useState<DemoCard | null>(null);
+  const [reviewingBuyback, setReviewingBuyback] = useState(false);
+  const [buybackMessage, setBuybackMessage] = useState('');
   const selectedCards = cards.filter((card) => selectedIds.includes(card.id));
   // Prototype estimate: round each card down to whole coins, not a live offer.
   const buybackCoins = selectedCards.reduce(
@@ -112,15 +114,12 @@ export function BinderScreen({
                     cash payout or wallet credit.
                   </Text>
                   {selectedCards.length > 0 ? (
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel="Clear buyback selection"
-                      onPress={() => setSelectedIds([])}
-                      style={discovery.reset}
-                    >
-                      <Text style={discovery.best}>Clear selection</Text>
-                    </Pressable>
+                    <View style={discovery.buybackActions}>
+                      <Pressable accessibilityRole="button" accessibilityLabel="Review buyback selection" onPress={() => setReviewingBuyback(true)} style={discovery.review}><Text style={discovery.selectText}>Review buyback</Text></Pressable>
+                      <Pressable accessibilityRole="button" accessibilityLabel="Clear buyback selection" onPress={() => setSelectedIds([])} style={discovery.reset}><Text style={discovery.best}>Clear</Text></Pressable>
+                    </View>
                   ) : null}
+                  {buybackMessage ? <Text accessibilityLiveRegion="polite" style={discovery.buybackMessage}>{buybackMessage}</Text> : null}
                 </View>
                 <TextInput
                   accessibilityLabel="Search collection"
@@ -336,6 +335,16 @@ export function BinderScreen({
           </View>
         </View>
       </Modal>
+      <Modal transparent visible={reviewingBuyback} animationType="slide" onRequestClose={() => setReviewingBuyback(false)}>
+        <View style={discovery.modalBackdrop}><View accessibilityViewIsModal style={discovery.detailSheet}>
+          <Text style={styles.eyebrow}>BUYBACK REVIEW</Text><Text style={styles.name}>Your selected cards</Text>
+          {selectedCards.map((card) => <View key={card.id} accessibilityLabel={`Buyback review card ${card.name}`} style={discovery.reviewCard}><View><Text style={discovery.reviewName}>{card.name}</Text><Text style={styles.set}>{card.setName}</Text></View><Text style={discovery.reviewValue}>{formatCoins(Math.floor(card.marketValueCents * 0.75))} coins</Text></View>)}
+          <View style={discovery.reviewTotal}><Text style={styles.set}>ESTIMATED RETURN</Text><Text style={styles.value}>{formatCoins(buybackCoins)} coins</Text></View>
+          <Text style={styles.set}>Demo only. Confirming does not remove cards or add coins.</Text>
+          <Pressable accessibilityRole="button" accessibilityLabel="Confirm demo buyback" onPress={() => { setReviewingBuyback(false); setBuybackMessage('Buyback preview confirmed. Your cards remain in your Binder.'); }} style={discovery.detailAction}><Text style={discovery.selectText}>Confirm demo buyback</Text></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Close buyback review" onPress={() => setReviewingBuyback(false)} style={discovery.close}><Text style={discovery.selectText}>Back to Binder</Text></Pressable>
+        </View></View>
+      </Modal>
     </AppScreen>
   );
 }
@@ -362,6 +371,8 @@ const discovery = StyleSheet.create({
     justifyContent: "center",
   },
   selected: { backgroundColor: colors.violet, borderColor: colors.violet },
+  buybackActions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md }, review: { flex: 1, minHeight: 45, alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, backgroundColor: colors.violet }, buybackMessage: { color: colors.emerald, fontWeight: '800', marginTop: spacing.sm },
+  reviewCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.border }, reviewName: { color: colors.text, fontWeight: '900' }, reviewValue: { color: colors.emerald, fontWeight: '900' }, reviewTotal: { marginVertical: spacing.md, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surfaceRaised },
   selectText: { color: colors.text, fontWeight: "700", textAlign: "center" },
   summary: {
     padding: spacing.lg,

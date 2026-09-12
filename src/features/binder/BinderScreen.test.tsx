@@ -47,6 +47,19 @@ it('previews selected buyback coins across filters without changing the collecti
   expect(cards).toHaveLength(3);
 });
 
+it('reviews selected cards before confirming a demo buyback', () => {
+  render(<BinderScreen cards={cards} />);
+  fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Murkrow' }));
+  fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Nami' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Review buyback selection' }));
+
+  expect(screen.getByText('BUYBACK REVIEW')).toBeTruthy();
+  expect(screen.getByLabelText('Buyback review card Murkrow')).toBeTruthy();
+  expect(screen.getByLabelText('Buyback review card Nami')).toBeTruthy();
+  fireEvent.press(screen.getByRole('button', { name: 'Confirm demo buyback' }));
+  expect(screen.getByText('Buyback preview confirmed. Your cards remain in your Binder.')).toBeTruthy();
+});
+
 it('adds a card to buyback from its detail sheet', () => {
   render(<BinderScreen cards={cards} />);
   fireEvent.press(screen.getByRole('button', { name: 'View details for Darkrai' }));
