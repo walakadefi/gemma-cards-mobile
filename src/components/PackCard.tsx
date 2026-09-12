@@ -37,7 +37,7 @@ export function PackCard({ expansion, onPress }: PackCardProps) {
 }
 
 const styles = StyleSheet.create({
-  card: { minWidth: 0, flex: 1, padding: spacing.sm, backgroundColor: colors.surfaceRaised, borderRadius: radii.lg, shadowColor: '#000', shadowOpacity: 0.28, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
+  card: { minWidth: 0, flex: 1, padding: spacing.sm, backgroundColor: colors.surfaceRaised, borderRadius: radii.lg, boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.28)' },
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.88 },
   pack: { height: 126, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, backgroundColor: '#0B0B0D', marginBottom: spacing.sm },
   packImage: { width: '100%', height: '100%' },
