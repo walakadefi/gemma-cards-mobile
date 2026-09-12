@@ -1,9 +1,14 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import { createDemoPack, openDemoPack } from '../../domain/demoCollection';
 import { ProfileScreen } from './ProfileScreen';
 
 describe('ProfileScreen', () => {
+  afterEach(async () => {
+    await AsyncStorage.clear();
+  });
+
   it('shows the guest identity and live collection summary', () => {
     const sealedPack = createDemoPack('ascended-heroes');
     const openedPack = openDemoPack(createDemoPack('pitch-black'));
@@ -65,5 +70,15 @@ describe('ProfileScreen', () => {
     fireEvent.press(toggle);
     expect(screen.getByRole('switch', { name: 'Pack drop notifications' }).props.accessibilityState.checked).toBe(true);
     expect(screen.getByText('Pack-drop notifications are on for this prototype.')).toBeTruthy();
+  });
+
+  it('remembers the local notification preference between launches', async () => {
+    const first = render(<ProfileScreen balance={1000} packs={[]} cards={[]} onClose={jest.fn()} onReset={jest.fn()} />);
+    fireEvent.press(screen.getByRole('switch', { name: 'Pack drop notifications' }));
+    await waitFor(() => expect(AsyncStorage.setItem).toHaveBeenCalledWith('@gemma/notification-preview', 'enabled'));
+    first.unmount();
+
+    render(<ProfileScreen balance={1000} packs={[]} cards={[]} onClose={jest.fn()} onReset={jest.fn()} />);
+    await waitFor(() => expect(screen.getByRole('switch', { name: 'Pack drop notifications' }).props.accessibilityState.checked).toBe(true));
   });
 });

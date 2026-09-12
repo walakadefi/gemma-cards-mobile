@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '../../components/AppScreen';
@@ -9,6 +10,8 @@ import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { createProfileSummary } from './profileSummary';
 import { bestPullShareMessage } from './profileShare';
 import { AnimatedCollectionValue } from './collectionValue';
+
+const notificationPreferenceKey = '@gemma/notification-preview';
 
 interface ProfileScreenProps {
   balance: number;
@@ -22,6 +25,15 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
   const summary = createProfileSummary(packs, cards, balance);
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const notificationPreferenceChanged = useRef(false);
+
+  useEffect(() => {
+    let active = true;
+    AsyncStorage.getItem(notificationPreferenceKey).then((value) => {
+      if (active && !notificationPreferenceChanged.current && value === 'enabled') setNotificationsEnabled(true);
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, []);
 
   const handleReset = () => {
     if (!confirmingReset) {
@@ -96,7 +108,7 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
 
         <View style={styles.notificationCard}>
           <View style={styles.notificationCopy}><Text style={styles.notificationTitle}>Pack drops & collection updates</Text><Text style={styles.notificationBody}>Get a heads-up when there is a new reason to open GemmaCards.</Text></View>
-          <Pressable accessibilityRole="switch" accessibilityLabel="Pack drop notifications" accessibilityState={{ checked: notificationsEnabled }} onPress={() => setNotificationsEnabled((enabled) => !enabled)} style={[styles.notificationSwitch, notificationsEnabled && styles.notificationSwitchEnabled]}><View style={[styles.notificationKnob, notificationsEnabled && styles.notificationKnobEnabled]} /></Pressable>
+          <Pressable accessibilityRole="switch" accessibilityLabel="Pack drop notifications" accessibilityState={{ checked: notificationsEnabled }} onPress={() => { notificationPreferenceChanged.current = true; setNotificationsEnabled((enabled) => { const next = !enabled; void AsyncStorage.setItem(notificationPreferenceKey, next ? 'enabled' : 'disabled'); return next; }); }} style={[styles.notificationSwitch, notificationsEnabled && styles.notificationSwitchEnabled]}><View style={[styles.notificationKnob, notificationsEnabled && styles.notificationKnobEnabled]} /></Pressable>
           {notificationsEnabled ? <Text accessibilityLiveRegion="polite" style={styles.notificationMessage}>Pack-drop notifications are on for this prototype.</Text> : <Text style={styles.notificationMessage}>Prototype preference only — no push permission is requested.</Text>}
         </View>
 
