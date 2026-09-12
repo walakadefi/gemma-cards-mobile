@@ -30,6 +30,7 @@ describe('ProfileScreen', () => {
     expect(screen.getByLabelText('Collection goal progress 10 of 25')).toBeTruthy();
     expect(screen.getByLabelText('First rip unlocked')).toBeTruthy();
     expect(screen.getByLabelText('Chase pull unlocked')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Share Mega Darkrai ex' })).toBeTruthy();
     expect(screen.getByText(/stored locally on this device/i)).toBeTruthy();
   });
 

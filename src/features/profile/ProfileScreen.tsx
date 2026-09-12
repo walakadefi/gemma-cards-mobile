@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '../../components/AppScreen';
 import { formatCoins, formatEuro } from '../../domain/catalog';
 import { DemoCard, DemoPack } from '../../domain/demoCollection';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { createProfileSummary } from './profileSummary';
+import { bestPullShareMessage } from './profileShare';
 
 interface ProfileScreenProps {
   balance: number;
@@ -66,7 +67,7 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
           <Stat value={`${summary.cardCount} cards`} label="Binder cards" />
           <Stat value={formatEuro(summary.collectionValueCents)} label="Collection value" accent />
         </View>
-        {summary.bestPullName ? <View style={styles.bestPull}><Text style={styles.cardLabel}>BEST PULL</Text><Text style={styles.bestPullName}>{summary.bestPullName}</Text></View> : null}
+        {summary.bestPullName ? <View style={styles.bestPull}><Text style={styles.cardLabel}>BEST PULL</Text><Text style={styles.bestPullName}>{summary.bestPullName}</Text><Pressable accessibilityRole="button" accessibilityLabel={`Share ${summary.bestPullName}`} onPress={() => void Share.share({ message: bestPullShareMessage(summary.bestPullName!, summary.bestPullSetName ?? 'my Binder') })} style={styles.shareButton}><Ionicons name="share-outline" size={16} color={colors.text} /><Text style={styles.shareText}>Share pull</Text></Pressable></View> : null}
 
         <View style={styles.goalCard}>
           <View style={styles.goalHeader}><Text style={styles.cardLabel}>COLLECTION GOAL</Text><Text style={styles.goalCount}>{summary.collectionGoal.current} / {summary.collectionGoal.target}</Text></View>
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
   statValue: { color: colors.text, fontSize: 19, fontWeight: '900' },
   statValueAccent: { color: colors.emerald },
   statLabel: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption },
-  bestPull: { padding: spacing.md, borderRadius: radii.md, backgroundColor: '#2A2037', borderWidth: 1, borderColor: '#F5C451' }, bestPullName: { marginTop: spacing.xs, color: '#F5C451', fontSize: 20, fontWeight: '900' },
+  bestPull: { padding: spacing.md, borderRadius: radii.md, backgroundColor: '#2A2037', borderWidth: 1, borderColor: '#F5C451' }, bestPullName: { marginTop: spacing.xs, color: '#F5C451', fontSize: 20, fontWeight: '900' }, shareButton: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.md, paddingHorizontal: spacing.md, minHeight: 38, borderRadius: radii.pill, backgroundColor: colors.violet }, shareText: { color: colors.text, fontWeight: '900', fontSize: fontSizes.caption },
   goalCard: { padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: '#3C2A68' }, goalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, goalCount: { color: colors.violet, fontWeight: '900' }, goalTitle: { color: colors.text, fontSize: 18, fontWeight: '900', marginTop: spacing.sm }, goalTrack: { height: 8, overflow: 'hidden', marginTop: spacing.md, borderRadius: radii.pill, backgroundColor: colors.surfaceRaised }, goalFill: { height: '100%', borderRadius: radii.pill, backgroundColor: colors.violet }, goalHint: { color: colors.textMuted, fontSize: fontSizes.caption, marginTop: spacing.sm },
   achievementList: { gap: spacing.sm }, achievement: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, opacity: .7 }, achievementUnlocked: { backgroundColor: '#29201A', borderColor: '#6B5726', opacity: 1 }, achievementTitle: { color: colors.text, fontWeight: '900' }, achievementStatus: { color: colors.textMuted, fontSize: fontSizes.caption, marginTop: 2 },
   detailsCard: { paddingHorizontal: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },

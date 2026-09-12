@@ -13,6 +13,7 @@ describe('createProfileSummary', () => {
       cardCount: 10,
       collectionValueCents: 38674,
       bestPullName: 'Mega Darkrai ex',
+      bestPullSetName: 'Pitch Black',
       collectionGoal: { title: 'Build a 25-card Binder', current: 10, target: 25 },
       achievements: [{ id: 'first-rip', title: 'First rip', unlocked: true }, { id: 'binder-ten', title: 'Binder builder', unlocked: true }, { id: 'chase-pull', title: 'Chase pull', unlocked: true }],
     });
