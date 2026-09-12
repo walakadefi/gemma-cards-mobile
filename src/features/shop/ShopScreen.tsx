@@ -38,6 +38,7 @@ const groupIntoRows = (items: Expansion[], columns: number): Expansion[][] => {
 };
 
 export const shopGridColumns = (_width: number) => 3;
+export const shopControlsStickyIndex = (recentCardCount: number) => recentCardCount > 0 ? 2 : 1;
 
 export function ShopScreen({ onOpenPack = () => undefined, recentCards = [], sealedPackCount = 0, onViewMyPacks }: ShopScreenProps) {
   const [filter, setFilter] = useState<GameFilter>('all');
@@ -52,7 +53,7 @@ export function ShopScreen({ onOpenPack = () => undefined, recentCards = [], sea
   return (
     <AppScreen>
       <AppHeader balance={1000} />
-      <ScrollView contentContainerStyle={styles.content} stickyHeaderIndices={[1]} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={styles.content} stickyHeaderIndices={[shopControlsStickyIndex(recentCards.length)]} keyboardShouldPersistTaps="handled">
         <View style={styles.featured}>
           <Text style={styles.demo}>DEMO CATALOG</Text>
           <View style={styles.featuredDrop}><Text style={styles.featuredDropLabel}>FEATURED DROP</Text><Text style={styles.featuredPackName}>{expansions[0].name}</Text></View>
