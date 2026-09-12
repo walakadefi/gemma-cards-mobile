@@ -68,6 +68,14 @@ describe('demo pack flow screens', () => {
 
     expect(screen.getAllByText(/SEALED DEMO PACK|OPENED · 10 CARDS/)[0].props.children).toBe('SEALED DEMO PACK');
   });
+  it('separates opened packs into a history with their best pull', () => {
+    const opened = openDemoPack(createDemoPack('pitch-black'));
+    render(<MyPacksScreen packs={[opened]} onOpen={jest.fn()} />);
+
+    expect(screen.getByText('PACK HISTORY')).toBeTruthy();
+    expect(screen.getByText('Best pull · Mega Darkrai ex')).toBeTruthy();
+    expect(screen.getByText('10 cards collected')).toBeTruthy();
+  });
   it('offers Binder and shop destinations after a reveal', () => {
     const onViewBinder = jest.fn();
     const onBrowsePacks = jest.fn();
