@@ -13,6 +13,8 @@ import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 interface ShopScreenProps {
   onOpenPack?: (id: string) => void;
   recentCards?: DemoCard[];
+  sealedPackCount?: number;
+  onViewMyPacks?: () => void;
 }
 
 const filters: { label: string; value: GameFilter; accessibilityLabel: string }[] = [
@@ -37,7 +39,7 @@ const groupIntoRows = (items: Expansion[], columns: number): Expansion[][] => {
 
 export const shopGridColumns = (_width: number) => 3;
 
-export function ShopScreen({ onOpenPack = () => undefined, recentCards = [] }: ShopScreenProps) {
+export function ShopScreen({ onOpenPack = () => undefined, recentCards = [], sealedPackCount = 0, onViewMyPacks }: ShopScreenProps) {
   const [filter, setFilter] = useState<GameFilter>('all');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<ExpansionSort>('newest');
@@ -61,7 +63,7 @@ export function ShopScreen({ onOpenPack = () => undefined, recentCards = [] }: S
             <Text style={styles.trust}>✓ Provably fair</Text>
             <Text style={styles.trust}>✓ Live values</Text>
           </View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Start your first rip" onPress={() => onOpenPack(expansions[0].id)} style={styles.firstRip}><Text style={styles.firstRipText}>Start your first rip</Text></Pressable>
+          {sealedPackCount > 0 && onViewMyPacks ? <View style={styles.readyPack}><Text style={styles.readyPackCount}>{sealedPackCount} {sealedPackCount === 1 ? 'pack' : 'packs'} ready to rip</Text><Pressable accessibilityRole="button" accessibilityLabel="View ready packs" onPress={onViewMyPacks} style={styles.readyPackAction}><Text style={styles.firstRipText}>View ready packs</Text></Pressable></View> : <Pressable accessibilityRole="button" accessibilityLabel="Start your first rip" onPress={() => onOpenPack(expansions[0].id)} style={styles.firstRip}><Text style={styles.firstRipText}>Start your first rip</Text></Pressable>}
         </View>
 
         {recentCards.length ? <View style={styles.recent}><View style={styles.recentHeading}><Text style={styles.sectionEyebrow}>RECENTLY PULLED</Text><Text style={styles.recentCount}>{recentCards.length} latest</Text></View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recentRow}>{recentCards.slice(0, 5).map((card) => <View key={card.id} accessibilityLabel={`Recent pull ${card.name}`} style={styles.recentCard}><Text numberOfLines={1} style={styles.recentName}>{card.name}</Text><Text numberOfLines={1} style={styles.recentSet}>{card.setName}</Text><Text style={styles.recentRarity}>{card.rarity}</Text></View>)}</ScrollView></View> : null}
@@ -157,6 +159,7 @@ const styles = StyleSheet.create({
   trustRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginTop: spacing.lg },
   trust: { color: colors.text, fontSize: fontSizes.caption, fontWeight: '700' },
   firstRip: { alignSelf: 'flex-start', minHeight: 46, marginTop: spacing.lg, paddingHorizontal: spacing.lg, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.violet }, firstRipText: { color: colors.text, fontWeight: '900' },
+  readyPack: { marginTop: spacing.lg, padding: spacing.md, borderRadius: radii.md, backgroundColor: '#10231D', borderWidth: 1, borderColor: '#1C5B46' }, readyPackCount: { color: colors.emerald, fontWeight: '900' }, readyPackAction: { alignSelf: 'flex-start', minHeight: 42, marginTop: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: colors.emerald },
   recent: { paddingHorizontal: spacing.md, marginBottom: spacing.md }, recentHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm }, recentCount: { color: colors.textMuted, fontSize: fontSizes.caption }, recentRow: { gap: spacing.sm, paddingRight: spacing.md }, recentCard: { width: 146, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surfaceRaised, borderWidth: 1, borderColor: colors.border }, recentName: { color: colors.text, fontWeight: '900' }, recentSet: { color: colors.textMuted, fontSize: 11, marginTop: 4 }, recentRarity: { color: '#F5C451', fontSize: 10, fontWeight: '900', marginTop: spacing.sm },
   controls: { paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.md, backgroundColor: colors.background, borderBottomWidth: 1, borderBottomColor: colors.border, zIndex: 2 },
   sectionHeading: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },

@@ -17,6 +17,15 @@ describe('ShopScreen', () => {
     expect(onOpenPack).toHaveBeenCalledWith('pitch-black');
   });
 
+  it('sends returning collectors straight to their sealed packs', () => {
+    const onViewMyPacks = jest.fn();
+    render(<ShopScreen onOpenPack={jest.fn()} sealedPackCount={2} onViewMyPacks={onViewMyPacks} />);
+
+    expect(screen.getByText('2 packs ready to rip')).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'View ready packs' }));
+    expect(onViewMyPacks).toHaveBeenCalledTimes(1);
+  });
+
   it('puts the featured drop and latest pull ahead of the catalog', () => {
     render(<ShopScreen onOpenPack={() => undefined} recentCards={recentCards} />);
 
