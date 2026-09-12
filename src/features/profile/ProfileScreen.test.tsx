@@ -55,4 +55,14 @@ describe('ProfileScreen', () => {
     fireEvent.press(screen.getByRole('button', { name: 'Confirm reset demo collection' }));
     expect(onReset).toHaveBeenCalledTimes(1);
   });
+
+  it('lets a collector turn prototype notifications on and off', () => {
+    render(<ProfileScreen balance={1000} packs={[]} cards={[]} onClose={jest.fn()} onReset={jest.fn()} />);
+
+    const toggle = screen.getByRole('switch', { name: 'Pack drop notifications' });
+    expect(toggle.props.accessibilityState.checked).toBe(false);
+    fireEvent.press(toggle);
+    expect(screen.getByRole('switch', { name: 'Pack drop notifications' }).props.accessibilityState.checked).toBe(true);
+    expect(screen.getByText('Pack-drop notifications are on for this prototype.')).toBeTruthy();
+  });
 });

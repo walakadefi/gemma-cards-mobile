@@ -20,6 +20,7 @@ interface ProfileScreenProps {
 export function ProfileScreen({ balance, packs, cards, onClose, onReset }: ProfileScreenProps) {
   const summary = createProfileSummary(packs, cards, balance);
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const handleReset = () => {
     if (!confirmingReset) {
@@ -92,6 +93,12 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
           <Text style={styles.noticeBody}>Your packs and cards are stored locally on this device. No personal details, payments, or account credentials are collected.</Text>
         </View>
 
+        <View style={styles.notificationCard}>
+          <View style={styles.notificationCopy}><Text style={styles.notificationTitle}>Pack drops & collection updates</Text><Text style={styles.notificationBody}>Get a heads-up when there is a new reason to open GemmaCards.</Text></View>
+          <Pressable accessibilityRole="switch" accessibilityLabel="Pack drop notifications" accessibilityState={{ checked: notificationsEnabled }} onPress={() => setNotificationsEnabled((enabled) => !enabled)} style={[styles.notificationSwitch, notificationsEnabled && styles.notificationSwitchEnabled]}><View style={[styles.notificationKnob, notificationsEnabled && styles.notificationKnobEnabled]} /></Pressable>
+          {notificationsEnabled ? <Text accessibilityLiveRegion="polite" style={styles.notificationMessage}>Pack-drop notifications are on for this prototype.</Text> : <Text style={styles.notificationMessage}>Prototype preference only — no push permission is requested.</Text>}
+        </View>
+
         <View style={styles.resetCard}>
           <Text style={styles.resetTitle}>Replay the demo</Text>
           <Text style={styles.resetBody}>Clear every locally saved pack and card to start the prototype again.</Text>
@@ -152,6 +159,7 @@ const styles = StyleSheet.create({
   notice: { marginTop: spacing.sm, padding: spacing.md, borderRadius: radii.md, backgroundColor: '#10231D', borderWidth: 1, borderColor: '#1C5B46' },
   noticeTitle: { color: colors.emerald, fontWeight: '900' },
   noticeBody: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption, lineHeight: 18 },
+  notificationCard: { padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }, notificationCopy: { paddingRight: 56 }, notificationTitle: { color: colors.text, fontWeight: '900' }, notificationBody: { color: colors.textMuted, fontSize: fontSizes.caption, lineHeight: 18, marginTop: spacing.xs }, notificationSwitch: { position: 'absolute', right: spacing.md, top: spacing.md, width: 44, height: 26, padding: 3, borderRadius: radii.pill, backgroundColor: colors.surfaceRaised }, notificationSwitchEnabled: { backgroundColor: colors.violet }, notificationKnob: { width: 20, height: 20, borderRadius: radii.pill, backgroundColor: colors.textMuted }, notificationKnobEnabled: { alignSelf: 'flex-end', backgroundColor: colors.text }, notificationMessage: { color: colors.emerald, fontSize: fontSizes.caption, marginTop: spacing.md },
   resetCard: { marginTop: spacing.sm, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   resetTitle: { color: colors.text, fontWeight: '900' },
   resetBody: { marginTop: spacing.xs, color: colors.textMuted, fontSize: fontSizes.caption, lineHeight: 18 },
