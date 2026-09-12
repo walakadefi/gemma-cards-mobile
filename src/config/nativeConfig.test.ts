@@ -23,7 +23,14 @@ describe('native app configuration', () => {
   });
 
   it('exports route HTML for worldwide web hosting', () => {
-    expect(appConfig.web).toMatchObject({ output: 'static' });
+    expect(appConfig.web).toMatchObject({
+      output: 'static',
+      name: 'GemmaCards',
+      shortName: 'GemmaCards',
+      favicon: './assets/icon.png',
+      themeColor: '#050506',
+      backgroundColor: '#050506',
+    });
   });
 
   it('configures app-version-based EAS updates for this Expo project', () => {

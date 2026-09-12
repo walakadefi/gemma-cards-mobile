@@ -38,7 +38,12 @@
       "expo-asset"
     ],
     "web": {
-      "output": "static"
+      "output": "static",
+      "name": "GemmaCards",
+      "shortName": "GemmaCards",
+      "favicon": "./assets/icon.png",
+      "themeColor": "#050506",
+      "backgroundColor": "#050506"
     },
     "experiments": {
       "typedRoutes": true
