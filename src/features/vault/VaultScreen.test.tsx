@@ -25,3 +25,11 @@ it('reviews a shipping selection before creating a demo request', () => {
   fireEvent.press(screen.getByRole('button', { name: 'Create demo shipping request' }));
   expect(screen.getByText('Shipping preview saved. No shipment or payment was created.')).toBeTruthy();
 });
+
+it('guides an empty Vault back to browse packs', () => {
+  const onBrowsePacks = jest.fn();
+  render(<VaultScreen cards={[]} onBrowsePacks={onBrowsePacks} />);
+
+  fireEvent.press(screen.getByRole('button', { name: 'Browse packs' }));
+  expect(onBrowsePacks).toHaveBeenCalledTimes(1);
+});

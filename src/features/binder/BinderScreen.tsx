@@ -22,10 +22,12 @@ export function BinderScreen({
   cards,
   onShip,
   onTrade,
+  onBrowsePacks,
 }: {
   cards: DemoCard[];
   onShip?: () => void;
   onTrade?: () => void;
+  onBrowsePacks?: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [rarity, setRarity] = useState("All");
@@ -173,6 +175,8 @@ export function BinderScreen({
               eyebrow="YOUR FIRST PULL"
               title="Your pulls will live here"
               body="Open a pack from My Packs to add all ten cards to your collection."
+              actionLabel={onBrowsePacks ? "Browse packs" : undefined}
+              onAction={onBrowsePacks}
             />
           ) : (
             <View style={discovery.summary}>

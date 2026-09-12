@@ -8,7 +8,7 @@ import { expansions } from '../../fixtures/catalog';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { expansionPresentation } from './expansionPresentation';
 
-export function MyPacksScreen({ packs, onOpen }: { packs: DemoPack[]; onOpen: (id: string) => void }) {
+export function MyPacksScreen({ packs, onOpen, onBrowsePacks }: { packs: DemoPack[]; onOpen: (id: string) => void; onBrowsePacks?: () => void }) {
   const sealedPacks = packs.filter((pack) => pack.status === 'sealed').reverse();
   const openedPacks = packs.filter((pack) => pack.status === 'revealed').reverse();
   const renderPack = (pack: DemoPack) => {
@@ -28,7 +28,7 @@ export function MyPacksScreen({ packs, onOpen }: { packs: DemoPack[]; onOpen: (i
   return <AppScreen scroll><AppHeader balance={1000} />
     <View style={styles.content}>
       <Text style={styles.eyebrow}>MY PACKS</Text><Text accessibilityRole="header" style={styles.title}>{sealedPacks.length ? 'Ready to rip' : 'Your pack collection'}</Text>
-      {packs.length === 0 ? <EmptyState eyebrow="DEMO MODE" title="Nothing sealed yet" body="Choose a pack in Shop to prepare a local demo reveal." /> : null}
+      {packs.length === 0 ? <EmptyState eyebrow="DEMO MODE" title="Nothing sealed yet" body="Choose a pack in Shop to prepare a local demo reveal." actionLabel={onBrowsePacks ? "Browse packs" : undefined} onAction={onBrowsePacks} /> : null}
       {sealedPacks.length ? <><Text style={styles.sectionLabel}>READY TO OPEN</Text>{sealedPacks.map(renderPack)}</> : null}
       {openedPacks.length ? <><Text style={styles.sectionLabel}>PACK HISTORY</Text><Text style={styles.sectionHint}>Your past rips, best pulls, and full reveal results.</Text>{openedPacks.map(renderPack)}</> : null}
     </View>

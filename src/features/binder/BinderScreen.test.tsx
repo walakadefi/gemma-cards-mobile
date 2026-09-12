@@ -40,6 +40,14 @@ it('renders binder cards as accessible collection sleeves', () => {
   expect(screen.getAllByTestId('binder-card')).toHaveLength(3);
 });
 
+it('guides an empty binder back to browse packs', () => {
+  const onBrowsePacks = jest.fn();
+  render(<BinderScreen cards={[]} onBrowsePacks={onBrowsePacks} />);
+
+  fireEvent.press(screen.getByRole('button', { name: 'Browse packs' }));
+  expect(onBrowsePacks).toHaveBeenCalledTimes(1);
+});
+
 it('previews selected buyback coins across filters without changing the collection', () => {
   render(<BinderScreen cards={cards} />);
   fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Murkrow' }));

@@ -61,6 +61,14 @@ describe('demo pack flow screens', () => {
     reveal.unmount();
   });
 
+  it('guides an empty My Packs screen back to the Shop', () => {
+    const onBrowsePacks = jest.fn();
+    render(<MyPacksScreen packs={[]} onOpen={jest.fn()} onBrowsePacks={onBrowsePacks} />);
+
+    fireEvent.press(screen.getByRole('button', { name: 'Browse packs' }));
+    expect(onBrowsePacks).toHaveBeenCalledTimes(1);
+  });
+
   it('puts a newly prepared sealed pack ahead of an older opened pack', () => {
     const opened = openDemoPack(createDemoPack('pitch-black'));
     const sealed = createDemoPack('time-of-battle', 'demo-time-of-battle-fresh');

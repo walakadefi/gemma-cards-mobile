@@ -8,7 +8,7 @@ import { formatEuro } from '../../domain/catalog';
 import { colors, radii, spacing } from '../../theme/tokens';
 import { shippingQuote } from './shippingQuote';
 
-export function VaultScreen({ cards }: { cards: DemoCard[] }) {
+export function VaultScreen({ cards, onBrowsePacks }: { cards: DemoCard[]; onBrowsePacks?: () => void }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [reviewing, setReviewing] = useState(false);
   const [message, setMessage] = useState('');
@@ -35,7 +35,7 @@ export function VaultScreen({ cards }: { cards: DemoCard[] }) {
         <View style={styles.row}><Text style={styles.name}>{item.name}</Text><Text style={styles.link}>{selected.includes(item.id) ? '✓' : '+'}</Text></View>
         <Text style={styles.body}>{item.setName}</Text><Text style={styles.value}>{formatEuro(item.marketValueCents)}</Text>
       </Pressable>}
-      ListEmptyComponent={<EmptyState eyebrow="YOUR FIRST DELIVERY" title="Your cards start in the Binder" body="Reveal a demo pack to preview shipping for your cards here." />}
+      ListEmptyComponent={<EmptyState eyebrow="YOUR FIRST DELIVERY" title="Your cards start in the Binder" body="Reveal a demo pack to preview shipping for your cards here." actionLabel={onBrowsePacks ? "Browse packs" : undefined} onAction={onBrowsePacks} />}
       ListFooterComponent={<View style={styles.summary}><Text style={styles.name}>How shipping is calculated</Text><Text style={styles.body}>€10 covers up to three cards worth €10 or more. Each extra card costs €5. Cards under €10 cost €5 each and do not use those first three places.</Text><Pressable accessibilityRole="link" onPress={() => void Linking.openURL('https://www.gemma.cards/shipping')} style={styles.clear}><Text style={styles.link}>Shipping details on Gemma ↗</Text></Pressable></View>}
     />
     <Modal transparent visible={reviewing} animationType="slide" onRequestClose={() => setReviewing(false)}><View style={styles.backdrop}><View accessibilityViewIsModal style={styles.reviewSheet}>
