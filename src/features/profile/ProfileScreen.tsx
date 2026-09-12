@@ -3,11 +3,12 @@ import { useState } from 'react';
 import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '../../components/AppScreen';
-import { formatCoins, formatEuro } from '../../domain/catalog';
+import { formatCoins } from '../../domain/catalog';
 import { DemoCard, DemoPack } from '../../domain/demoCollection';
 import { colors, fontSizes, radii, spacing } from '../../theme/tokens';
 import { createProfileSummary } from './profileSummary';
 import { bestPullShareMessage } from './profileShare';
+import { AnimatedCollectionValue } from './collectionValue';
 
 interface ProfileScreenProps {
   balance: number;
@@ -66,7 +67,7 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
           <Stat value={`${summary.packCount} packs`} label="Total packs" />
           <Stat value={`${summary.openedPackCount} opened`} label="Opened packs" />
           <Stat value={`${summary.cardCount} cards`} label="Binder cards" />
-          <Stat value={formatEuro(summary.collectionValueCents)} label="Collection value" accent />
+          <AnimatedValueStat valueCents={summary.collectionValueCents} label="Collection value" />
         </View>
         {summary.bestPullName ? <View style={styles.bestPull}><Text style={styles.cardLabel}>BEST PULL</Text><Text style={styles.bestPullName}>{summary.bestPullName}</Text><Pressable accessibilityRole="button" accessibilityLabel={`Share ${summary.bestPullName}`} onPress={() => void Share.share({ message: bestPullShareMessage(summary.bestPullName!, summary.bestPullSetName ?? 'my Binder') })} style={styles.shareButton}><Ionicons name="share-outline" size={16} color={colors.text} /><Text style={styles.shareText}>Share pull</Text></Pressable></View> : null}
 
@@ -120,6 +121,10 @@ export function ProfileScreen({ balance, packs, cards, onClose, onReset }: Profi
 
 function Stat({ value, label, accent = false }: { value: string; label: string; accent?: boolean }) {
   return <View style={styles.stat}><Text style={[styles.statValue, accent && styles.statValueAccent]}>{value}</Text><Text style={styles.statLabel}>{label}</Text></View>;
+}
+
+function AnimatedValueStat({ valueCents, label }: { valueCents: number; label: string }) {
+  return <View style={styles.stat}><AnimatedCollectionValue valueCents={valueCents} style={[styles.statValue, styles.statValueAccent]} /><Text style={styles.statLabel}>{label}</Text></View>;
 }
 
 function Detail({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
