@@ -54,6 +54,15 @@ it('adds a card to buyback from its detail sheet', () => {
   expect(screen.getByLabelText('Estimated buyback 25,900 coins')).toBeTruthy();
 });
 
+it('shows a collector-focused detail view for a selected card', () => {
+  render(<BinderScreen cards={cards} />);
+  fireEvent.press(screen.getByRole('button', { name: 'View details for Darkrai' }));
+
+  expect(screen.getByText('COLLECTION ITEM')).toBeTruthy();
+  expect(screen.getByText('YOUR CARD')).toBeTruthy();
+  expect(screen.getByLabelText('Selected card rarity Illustration Rare')).toBeTruthy();
+});
+
 it('excludes removed cards from the buyback preview', () => {
   const { rerender } = render(<BinderScreen cards={cards} />);
   fireEvent.press(screen.getByRole('checkbox', { name: 'Preview buyback for Nami' }));

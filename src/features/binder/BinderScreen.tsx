@@ -274,15 +274,16 @@ export function BinderScreen({
           <View accessibilityViewIsModal style={discovery.detailSheet}>
             {detailCard ? (
               <>
-                <Text style={styles.eyebrow}>CARD DETAILS</Text>
-                <Text style={styles.name}>{detailCard.name}</Text>
-                <Text style={styles.set}>
-                  {detailCard.setName} · {detailCard.rarity}
-                </Text>
-                <Text style={styles.value}>
-                  {formatEuro(detailCard.marketValueCents)}
-                </Text>
-                <Text style={styles.set}>Market value · demo estimate</Text>
+                <Text style={styles.eyebrow}>COLLECTION ITEM</Text>
+                <View style={discovery.detailHero}>
+                  <Text accessibilityLabel={`Selected card rarity ${detailCard.rarity}`} style={discovery.detailRarity}>{detailCard.rarity}</Text>
+                  <Text style={discovery.detailName}>{detailCard.name}</Text>
+                  <Text style={discovery.detailSet}>{detailCard.setName}</Text>
+                </View>
+                <View style={discovery.detailStats}>
+                  <View style={discovery.detailStat}><Text style={discovery.statLabel}>YOUR CARD</Text><Text style={discovery.statValue}>In Binder</Text></View>
+                  <View style={discovery.detailStat}><Text style={discovery.statLabel}>DEMO VALUE</Text><Text style={discovery.statValue}>{formatEuro(detailCard.marketValueCents)}</Text></View>
+                </View>
                 <View style={discovery.detailActions}>
                   <Pressable
                     accessibilityRole="button"
@@ -404,6 +405,14 @@ const discovery = StyleSheet.create({
     borderTopRightRadius: radii.lg,
     backgroundColor: colors.surface,
   },
+  detailHero: { marginTop: spacing.md, padding: spacing.lg, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.violet, backgroundColor: "#211A35", gap: spacing.xs },
+  detailRarity: { color: colors.violet, fontSize: 11, fontWeight: "900", letterSpacing: 1 },
+  detailName: { color: colors.text, fontSize: 28, lineHeight: 33, fontWeight: "900" },
+  detailSet: { color: colors.textMuted, fontWeight: "700" },
+  detailStats: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.md },
+  detailStat: { flex: 1, padding: spacing.md, borderRadius: radii.md, backgroundColor: colors.surfaceRaised, gap: 4 },
+  statLabel: { color: colors.textMuted, fontSize: 10, fontWeight: "900", letterSpacing: .8 },
+  statValue: { color: colors.emerald, fontWeight: "900" },
   detailActions: {
     flexDirection: "row",
     gap: spacing.sm,
