@@ -35,12 +35,14 @@ const groupIntoRows = (items: Expansion[], columns: number): Expansion[][] => {
   return rows;
 };
 
+export const shopGridColumns = (_width: number) => 3;
+
 export function ShopScreen({ onOpenPack = () => undefined, recentCards = [] }: ShopScreenProps) {
   const [filter, setFilter] = useState<GameFilter>('all');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<ExpansionSort>('newest');
   const { width } = useWindowDimensions();
-  const columns = width >= 380 ? 2 : 1;
+  const columns = shopGridColumns(width);
   const visibleExpansions = useMemo(() => browseExpansions(expansions, { filter, query, sort }), [filter, query, sort]);
   const rows = useMemo(() => groupIntoRows(visibleExpansions, columns), [columns, visibleExpansions]);
   const resultLabel = `${visibleExpansions.length} ${visibleExpansions.length === 1 ? 'set' : 'sets'}`;

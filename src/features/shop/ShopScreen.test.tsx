@@ -1,10 +1,15 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
-import { ShopScreen } from './ShopScreen';
+import { shopGridColumns, ShopScreen } from './ShopScreen';
 
 const recentCards = [{ id: 'recent-1', name: 'Mega Darkrai ex', setName: 'Pitch Black', rarity: 'Illustration Rare' as const, marketValueCents: 34534 }];
 
 describe('ShopScreen', () => {
+  it('keeps three pack slots across the shop grid on phone-sized screens', () => {
+    expect(shopGridColumns(320)).toBe(3);
+    expect(shopGridColumns(390)).toBe(3);
+  });
+
   it('starts the featured first rip directly from the welcome panel', () => {
     const onOpenPack = jest.fn();
     render(<ShopScreen onOpenPack={onOpenPack} />);

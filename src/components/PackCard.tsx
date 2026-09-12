@@ -2,7 +2,7 @@ import { AccessibilityInfo, Image, Pressable, StyleSheet, Text, View } from 'rea
 import { useEffect, useState } from 'react';
 
 import { Expansion, formatCoins, formatEuro } from '../domain/catalog';
-import { colors, fontSizes, radii, spacing } from '../theme/tokens';
+import { colors, radii, spacing } from '../theme/tokens';
 
 interface PackCardProps {
   expansion: Expansion;
@@ -26,7 +26,7 @@ export function PackCard({ expansion, onPress }: PackCardProps) {
       onPress={onPress}
       style={({ pressed }) => [styles.card, pressed && !reduceMotion && styles.pressed]}
     >
-      <View style={[styles.pack, { borderColor: expansion.accent }]}>
+      <View style={styles.pack}>
         <Image accessibilityLabel={`${expansion.name} booster pack artwork`} source={{ uri: expansion.imageUri }} resizeMode="contain" style={styles.packImage} />
       </View>
       <Text style={styles.game}>{expansion.game === 'pokemon' ? 'POKÉMON' : 'ONE PIECE'}</Text>
@@ -46,12 +46,12 @@ export function PackCard({ expansion, onPress }: PackCardProps) {
 }
 
 const styles = StyleSheet.create({
-  card: { minWidth: 160, flex: 1, padding: spacing.md, backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border },
+  card: { minWidth: 0, flex: 1, padding: spacing.sm, backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border },
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.88 },
-  pack: { height: 154, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, borderWidth: 1, backgroundColor: colors.surfaceRaised, marginBottom: spacing.md },
+  pack: { height: 126, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderRadius: radii.md, backgroundColor: colors.surfaceRaised, marginBottom: spacing.sm },
   packImage: { width: '100%', height: '100%' },
   game: { color: colors.violet, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
-  name: { minHeight: 44, marginTop: 4, color: colors.text, fontSize: fontSizes.label, lineHeight: 21, fontWeight: '800' },
+  name: { minHeight: 36, marginTop: 4, color: colors.text, fontSize: 14, lineHeight: 18, fontWeight: '800' },
   metaRow: { marginTop: spacing.sm, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   metaRight: { alignItems: 'flex-end' },
   metaLabel: { color: colors.textMuted, fontSize: 9, fontWeight: '800', letterSpacing: 0.8 },
