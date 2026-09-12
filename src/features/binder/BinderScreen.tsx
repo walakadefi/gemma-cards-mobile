@@ -49,6 +49,8 @@ export function BinderScreen({
       !hit || card.marketValueCents > hit.marketValueCents ? card : hit,
     undefined,
   );
+  const goalTarget = cards.length < 10 ? 10 : cards.length < 25 ? 25 : cards.length < 50 ? 50 : cards.length < 100 ? 100 : Math.ceil((cards.length + 1) / 50) * 50;
+  const cardsToGoal = goalTarget - cards.length;
   const visible = useMemo(() => {
     const term = query.trim().toLowerCase();
     const result = cards.filter(
@@ -77,7 +79,7 @@ export function BinderScreen({
             <Text accessibilityRole="header" style={styles.title}>
               Your collection
             </Text>
-            <View style={discovery.summary}>
+            <View accessible accessibilityLabel="Binder collection dashboard" style={discovery.summary}>
               <Text style={styles.set}>COLLECTION VALUE · DEMO</Text>
               <Text
                 accessibilityLabel={`Total collection value ${formatEuro(total)}`}
@@ -91,6 +93,7 @@ export function BinderScreen({
               {best ? (
                 <Text style={discovery.best}>Best pull · {best.name}</Text>
               ) : null}
+              <Text style={discovery.goal}>Next goal · {cardsToGoal} {cardsToGoal === 1 ? "card" : "cards"} to {goalTarget}</Text>
             </View>
             {cards.length > 0 ? (
               <>
@@ -386,7 +389,7 @@ const discovery = StyleSheet.create({
     fontWeight: "900",
     marginTop: spacing.sm,
   },
-  best: { color: "#F5C451", fontWeight: "800", marginTop: spacing.sm },
+  best: { color: "#F5C451", fontWeight: "800", marginTop: spacing.sm }, goal: { color: colors.textMuted, fontSize: 12, fontWeight: "800", marginTop: spacing.sm },
   search: {
     minHeight: 48,
     paddingHorizontal: spacing.md,

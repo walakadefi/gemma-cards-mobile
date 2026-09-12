@@ -40,6 +40,13 @@ it('renders binder cards as accessible collection sleeves', () => {
   expect(screen.getAllByTestId('binder-card')).toHaveLength(3);
 });
 
+it('shows a compact collection dashboard with the next goal', () => {
+  render(<BinderScreen cards={cards} />);
+
+  expect(screen.getByLabelText('Binder collection dashboard')).toBeTruthy();
+  expect(screen.getByText('Next goal · 7 cards to 10')).toBeTruthy();
+});
+
 it('guides an empty binder back to browse packs', () => {
   const onBrowsePacks = jest.fn();
   render(<BinderScreen cards={[]} onBrowsePacks={onBrowsePacks} />);
